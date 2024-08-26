@@ -28,12 +28,12 @@ public class ChunkLoaderCmd implements TabExecutor {
     }
 
     if (args.length != 1) {
-      sender.sendMessage("Syntaxerror!");
+      sender.sendMessage(formatColors("Syntaxerror! Please use: &c" + cmd.getUsage()));
       return true;
     }
 
     if (!args[0].equalsIgnoreCase("add") && !args[0].equalsIgnoreCase("remove")) {
-      player.sendMessage("Syntaxerror!");
+      player.sendMessage(formatColors("Syntaxerror! Please use: &c" + cmd.getUsage()));
       return true;
     }
 

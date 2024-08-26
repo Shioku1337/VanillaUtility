@@ -22,7 +22,6 @@ public final class VanillaUtility extends JavaPlugin {
   @SuppressWarnings("ConstantConditions deprecation")
   public void onEnable() {
     // Plugin startup logic
-    writeInitialTimestamp();
 
     PluginDescriptionFile descriptionFile = this.getDescription();
     for (String commandName : descriptionFile.getCommands().keySet()) {
@@ -40,34 +39,6 @@ public final class VanillaUtility extends JavaPlugin {
   @Override
   public void onDisable() {
     // Plugin shutdown logic
-  }
-
-  private void writeInitialTimestamp() {
-    File file = new File(this.getDataFolder(), "time");
-
-    if (!file.exists()) {
-      this.saveResource("time", false);
-    }
-
-    long beginningTimestamp;
-
-    try {
-      InputStream stream = new FileInputStream(file);
-
-      BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-
-      beginningTimestamp = Long.parseLong(reader.readLine());
-    } catch (IOException ignored) {
-      beginningTimestamp = System.currentTimeMillis();
-    }
-
-    if (beginningTimestamp == 0) {
-      beginningTimestamp = System.currentTimeMillis();
-    }
-
-    try (FileWriter writer = new FileWriter(file)) {
-      writer.write(beginningTimestamp + "");
-    } catch (IOException ignored) {}
   }
 
   public static String formatColors(String arg) {
