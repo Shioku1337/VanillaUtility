@@ -58,6 +58,7 @@ public final class VanillaUtility extends JavaPlugin {
       players.forEach(player -> {
         Score score = objective.getScore(player);
         score.setScore(player.getStatistic(Statistic.PLAY_ONE_MINUTE));
+        player.setScoreboard(scoreboard);
         player.sendMessage("Your Statistic has been updated.");
       });
     }, 0, 60 * 20);
