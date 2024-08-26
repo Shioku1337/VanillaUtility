@@ -1,0 +1,11 @@
+name: VanillaUtility
+version: '1.0-SNAPSHOT'
+main: com.github.shioku.vanillautility.VanillaUtility
+api-version: '1.21'
+
+commands:
+  chunkloader:
+    aliases: [cl]
+    description: "Load and unload the chunk you're standing in."
+    permission: "vu.chunkloader"
+    usage: "/<label> add,remove"
