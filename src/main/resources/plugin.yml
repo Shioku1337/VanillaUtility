@@ -1,5 +1,5 @@
 name: VanillaUtility
-version: '1.0-SNAPSHOT'
+version: 0.1.0
 main: com.github.shioku.vanillautility.VanillaUtility
 api-version: '1.21'
 
