@@ -3,7 +3,6 @@ package com.github.shioku.vanillautility.cmds;
 import com.github.shioku.vanillautility.VanillaUtility;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;

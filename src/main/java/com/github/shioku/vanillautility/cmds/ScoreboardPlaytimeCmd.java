@@ -7,7 +7,6 @@ import org.bukkit.Statistic;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +19,7 @@ public class ScoreboardPlaytimeCmd implements TabExecutor {
   private final VanillaUtility plugin;
 
   @Override
-  public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) c{
+  public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
     ScoreboardManager manager = Bukkit.getScoreboardManager();
 
     assert manager != null : "Scoreboard manager is null";
