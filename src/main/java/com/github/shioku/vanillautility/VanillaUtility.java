@@ -4,6 +4,7 @@ import com.github.shioku.vanillautility.cmds.ChunkLoaderCmd;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -21,6 +22,7 @@ public final class VanillaUtility extends JavaPlugin {
   @SuppressWarnings("ConstantConditions deprecation")
   public void onEnable() {
     // Plugin startup logic
+    ConsoleCommandSender sender = Bukkit.getServer().getConsoleSender();
 
     PluginDescriptionFile descriptionFile = this.getDescription();
     for (String commandName : descriptionFile.getCommands().keySet()) {
@@ -28,11 +30,15 @@ public final class VanillaUtility extends JavaPlugin {
       if (command == null) continue;
       command.setPermissionMessage(PREFIX + formatColors("You do &cnot have permission &7to perform this command!")).setUsage(command.getUsage().replace("<label>", command.getLabel()));
     }
+    sender.sendMessage(PREFIX + formatColors("Set permission and usage messages."));
 
     getCommand("chunkloader").setExecutor(new ChunkLoaderCmd(this));
     getCommand("chunkloader").setTabCompleter(new ChunkLoaderCmd(this));
+    sender.sendMessage(PREFIX + formatColors("Registered commands."));
 
     registerScoreboardPlaytime();
+    sender.sendMessage(PREFIX + formatColors("Registered scoreboard timer."));
+    sender.sendMessage(PREFIX + formatColors("&6" + this.getDescription().getName() + " &7has been enabled with version &6" + this.getDescription().getVersion() + "&7.&r"));
   }
 
   @Override
@@ -58,7 +64,6 @@ public final class VanillaUtility extends JavaPlugin {
         Score score = objective.getScore(player.getUniqueId().toString());
         score.setScore(Math.round((float) player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 60));
         player.setScoreboard(scoreboard);
-        player.sendMessage("Your Statistic has been updated.");
       });
     }, 0, 60 * 20);
   }
