@@ -63,11 +63,11 @@ public final class VanillaUtility extends JavaPlugin {
     Bukkit.getScheduler().runTaskTimer(this, task -> {
       List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
       players.forEach(player -> {
-        Score score = objective.getScore(player.getUniqueId().toString());
+        Score score = objective.getScore(player.getName());
         score.setScore(Math.round((float) player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 60));
         player.setScoreboard(scoreboard);
       });
-    }, 0, 60 * 20);
+    }, 0, (60 / 2) * 20);
   }
 
   public static String formatColors(String arg) {
