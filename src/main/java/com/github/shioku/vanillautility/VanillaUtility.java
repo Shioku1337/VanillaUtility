@@ -26,6 +26,7 @@ public final class VanillaUtility extends JavaPlugin {
   @Override
   @SuppressWarnings("ConstantConditions")
   public void onEnable() {
+    saveDefaultConfig();
     // Plugin startup logic
     ConsoleCommandSender sender = Bukkit.getServer().getConsoleSender();
 
@@ -64,10 +65,9 @@ public final class VanillaUtility extends JavaPlugin {
     Scoreboard scoreboard = manager.getNewScoreboard();
     this.scoreboard = scoreboard;
 
-    Objective objective = scoreboard.registerNewObjective("playtime", Criteria.statistic(Statistic.PLAY_ONE_MINUTE), "Playtime");
+    Objective objective = scoreboard.registerNewObjective("playtime", Criteria.statistic(Statistic.PLAY_ONE_MINUTE), formatColors("&" + getConfig().getString("playtimeTitleColor") + "Playtime"));
 
     objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-    objective.setDisplayName("Playtime");
 
     Bukkit.getScheduler().runTaskTimer(this, task -> {
       List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
