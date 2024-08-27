@@ -12,7 +12,6 @@ import org.bukkit.scoreboard.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public final class VanillaUtility extends JavaPlugin {
 
@@ -56,8 +55,8 @@ public final class VanillaUtility extends JavaPlugin {
     Bukkit.getScheduler().runTaskTimer(this, task -> {
       List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
       players.forEach(player -> {
-        Score score = objective.getScore(player);
-        score.setScore(player.getStatistic(Statistic.PLAY_ONE_MINUTE));
+        Score score = objective.getScore(player.getUniqueId().toString());
+        score.setScore(Math.round((float) player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 60));
         player.setScoreboard(scoreboard);
         player.sendMessage("Your Statistic has been updated.");
       });
