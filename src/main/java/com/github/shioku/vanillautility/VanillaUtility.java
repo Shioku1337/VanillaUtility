@@ -19,7 +19,7 @@ public final class VanillaUtility extends JavaPlugin {
   public static String PREFIX = formatColors("&8[&3Admin&8] &7");
 
   @Override
-  @SuppressWarnings("ConstantConditions deprecation")
+  @SuppressWarnings("ConstantConditions")
   public void onEnable() {
     // Plugin startup logic
     ConsoleCommandSender sender = Bukkit.getServer().getConsoleSender();
@@ -30,7 +30,7 @@ public final class VanillaUtility extends JavaPlugin {
     for (String commandName : descriptionFile.getCommands().keySet()) {
       PluginCommand command = this.getCommand(commandName);
       if (command == null) continue;
-      command.setPermissionMessage(PREFIX + formatColors("You do &cnot have permission &7to perform this command!")).setUsage(command.getUsage().replace("<label>", command.getLabel()));
+      command.setUsage(command.getUsage().replace("<label>", command.getLabel()));
     }
     sender.sendMessage(PREFIX + formatColors("Set permission and usage messages."));
 
