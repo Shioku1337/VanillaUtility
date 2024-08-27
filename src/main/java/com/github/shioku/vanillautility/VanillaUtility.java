@@ -24,6 +24,8 @@ public final class VanillaUtility extends JavaPlugin {
     // Plugin startup logic
     ConsoleCommandSender sender = Bukkit.getServer().getConsoleSender();
 
+    sender.sendMessage(PREFIX + formatColors("&aEnabling &6" + getDescription().getName() + " &7with version &7" + getDescription().getVersion() + "&7.&r"));
+
     PluginDescriptionFile descriptionFile = this.getDescription();
     for (String commandName : descriptionFile.getCommands().keySet()) {
       PluginCommand command = this.getCommand(commandName);
@@ -38,7 +40,7 @@ public final class VanillaUtility extends JavaPlugin {
 
     registerScoreboardPlaytime();
     sender.sendMessage(PREFIX + formatColors("Registered scoreboard timer."));
-    sender.sendMessage(PREFIX + formatColors("&6" + this.getDescription().getName() + " &7has been enabled with version &6" + this.getDescription().getVersion() + "&7.&r"));
+    sender.sendMessage(PREFIX + formatColors("&6" + this.getDescription().getName() + " &7has been &aenabled &7with version &6" + this.getDescription().getVersion() + "&7.&r"));
   }
 
   @Override
