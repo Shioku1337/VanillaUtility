@@ -1,6 +1,8 @@
 package com.github.shioku.vanillautility;
 
 import com.github.shioku.vanillautility.cmds.ChunkLoaderCmd;
+import com.github.shioku.vanillautility.listeners.ScoreboardListener;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
@@ -14,9 +16,12 @@ import org.bukkit.scoreboard.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public final class VanillaUtility extends JavaPlugin {
 
   public static String PREFIX = formatColors("&8[&3Admin&8] &7");
+
+  private Scoreboard scoreboard = null;
 
   @Override
   @SuppressWarnings("ConstantConditions")
@@ -40,6 +45,9 @@ public final class VanillaUtility extends JavaPlugin {
 
     registerScoreboardPlaytime();
     sender.sendMessage(PREFIX + formatColors("Registered scoreboard timer."));
+
+    Bukkit.getServer().getPluginManager().registerEvents(new ScoreboardListener(this), this);
+
     sender.sendMessage(PREFIX + formatColors("&6" + this.getDescription().getName() + " &7has been &aenabled &7with version &6" + this.getDescription().getVersion() + "&7.&r"));
   }
 
@@ -54,6 +62,7 @@ public final class VanillaUtility extends JavaPlugin {
     assert manager != null : "Scoreboard manager is null";
 
     Scoreboard scoreboard = manager.getNewScoreboard();
+    this.scoreboard = scoreboard;
 
     Objective objective = scoreboard.registerNewObjective("playtime", Criteria.statistic(Statistic.PLAY_ONE_MINUTE), "Playtime");
 
@@ -67,7 +76,7 @@ public final class VanillaUtility extends JavaPlugin {
         score.setScore(Math.round((float) player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 60));
         player.setScoreboard(scoreboard);
       });
-    }, 0, (60 / 2) * 20);
+    }, 0, 5 * 20);
   }
 
   public static String formatColors(String arg) {
