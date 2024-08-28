@@ -119,5 +119,4 @@ node_modules
 /server/**
 /server/server.properties
 !/server/eula.txt
-!/server/spigot-1.21.1.jar
 !/server/start*
