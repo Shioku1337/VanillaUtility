@@ -24,11 +24,11 @@ public final class VanillaUtility extends JavaPlugin {
 
   public static String PREFIX = formatColors("&8[&3Admin&8] &7");
 
+  private boolean enableHealth = false;
+
   private Scoreboard playtimeScoreboard = null;
   private Scoreboard deathScoreboard = null;
   private Scoreboard healthScoreboard = null;
-
-  private boolean enableHealth = false;
 
   @Override
   @SuppressWarnings("ConstantConditions")
