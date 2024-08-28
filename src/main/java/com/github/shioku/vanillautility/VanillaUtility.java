@@ -64,9 +64,7 @@ public final class VanillaUtility extends JavaPlugin {
 
     sender.sendMessage(
       PREFIX +
-      formatColors(
-        "&6" + this.getDescription().getName() + " &7has been &aenabled &7with &6v" + this.getDescription().getVersion() + "&7.&r"
-      )
+      formatColors("&6" + this.getDescription().getName() + " &7has been &aenabled &7with &6v" + this.getDescription().getVersion() + "&7.&r")
     );
   }
 
