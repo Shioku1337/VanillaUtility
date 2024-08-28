@@ -1,2 +1,7 @@
 # https://minecraft.fandom.com/wiki/Formatting_codes#Color_codes for color codes. use the code column without the paragraph symbol
+
+# Changes the title color of the sidebar playtime scoreboard
 playtimeTitleColor: 'a'
+
+# Enables a health display below a player's name
+enableHealth: true
