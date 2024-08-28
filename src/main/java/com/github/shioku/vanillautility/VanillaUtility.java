@@ -26,9 +26,7 @@ public final class VanillaUtility extends JavaPlugin {
 
   private boolean enableHealth = false;
 
-  private Scoreboard playtimeScoreboard = null;
-  private Scoreboard deathScoreboard = null;
-  private Scoreboard healthScoreboard = null;
+  private Scoreboard scoreboard = null;
 
   @Override
   @SuppressWarnings("ConstantConditions")
@@ -55,6 +53,8 @@ public final class VanillaUtility extends JavaPlugin {
     getCommand("chunkloader").setTabCompleter(new ChunkLoaderCmd(this));
     sender.sendMessage(PREFIX + formatColors("Registered commands."));
 
+    this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+
     registerScoreboardPlaytime();
     if (this.enableHealth) registerHealthScoreboard();
     registerScoreboardDeaths();
@@ -69,14 +69,8 @@ public final class VanillaUtility extends JavaPlugin {
   }
 
   private void registerScoreboardPlaytime() {
-    ScoreboardManager manager = Bukkit.getScoreboardManager();
-
-    if (manager == null) return;
-
-    this.playtimeScoreboard = manager.getNewScoreboard();
-
     Objective objective =
-      this.playtimeScoreboard.registerNewObjective(
+      this.scoreboard.registerNewObjective(
           "playtime",
           Criteria.statistic(Statistic.PLAY_ONE_MINUTE),
           formatColors("&" + this.getConfig().getString("playtimeTitleColor") + "Playtime")
@@ -102,7 +96,7 @@ public final class VanillaUtility extends JavaPlugin {
             .forEach(player -> {
               Score score = objective.getScore(player.getName());
               score.setScore(Math.round((float) player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 60));
-              player.setScoreboard(this.playtimeScoreboard);
+              player.setScoreboard(this.scoreboard);
             }),
         0,
         5 * 20
@@ -110,12 +104,7 @@ public final class VanillaUtility extends JavaPlugin {
   }
 
   private void registerHealthScoreboard() {
-    ScoreboardManager manager = Bukkit.getScoreboardManager();
-
-    if (manager == null) return;
-
-    this.healthScoreboard = manager.getNewScoreboard();
-    Objective obj = this.healthScoreboard.registerNewObjective("health", Criteria.DUMMY, "Health");
+    Objective obj = this.scoreboard.registerNewObjective("health", Criteria.DUMMY, "Health");
 
     obj.setDisplaySlot(DisplaySlot.BELOW_NAME);
 
@@ -123,18 +112,12 @@ public final class VanillaUtility extends JavaPlugin {
       .forEach(player -> {
         Score score = obj.getScore(player.getName());
         score.setScore(Math.round((float) player.getHealth()));
-        player.setScoreboard(this.healthScoreboard);
+        player.setScoreboard(this.scoreboard);
       });
   }
 
   private void registerScoreboardDeaths() {
-    ScoreboardManager manager = Bukkit.getScoreboardManager();
-
-    if (manager == null) return;
-
-    this.deathScoreboard = manager.getNewScoreboard();
-
-    Objective objective = this.deathScoreboard.registerNewObjective("deaths", Criteria.statistic(Statistic.DEATHS), "Deaths");
+    Objective objective = this.scoreboard.registerNewObjective("deaths", Criteria.statistic(Statistic.DEATHS), "Deaths");
 
     objective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
 
@@ -142,7 +125,7 @@ public final class VanillaUtility extends JavaPlugin {
       .forEach(player -> {
         Score score = objective.getScore(player.getName());
         score.setScore(player.getStatistic(Statistic.DEATHS));
-        player.setScoreboard(this.deathScoreboard);
+        player.setScoreboard(this.scoreboard);
       });
   }
 

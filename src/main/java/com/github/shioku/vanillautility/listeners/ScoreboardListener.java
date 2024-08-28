@@ -11,6 +11,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.scoreboard.Objective;
 
 @RequiredArgsConstructor
@@ -20,23 +21,23 @@ public class ScoreboardListener implements Listener {
 
   @EventHandler
   public void onJoin(PlayerJoinEvent event) {
-    Objective obj = this.plugin.getPlaytimeScoreboard().getObjective("playtime");
+    Objective obj = this.plugin.getScoreboard().getObjective("playtime");
 
     assert obj != null : "Playtime objective is null";
 
     obj.getScore(event.getPlayer().getName()).setScore(event.getPlayer().getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 60);
-    event.getPlayer().setScoreboard(this.plugin.getPlaytimeScoreboard());
+    Bukkit.getOnlinePlayers().forEach(player -> player.setScoreboard(this.plugin.getScoreboard()));
   }
 
   @EventHandler
   public void onPlayerDeath(PlayerDeathEvent event) {
     // Maybe only need to set for event player as in onJoin?
-    Objective obj = this.plugin.getPlaytimeScoreboard().getObjective("deaths");
+    Objective obj = this.plugin.getScoreboard().getObjective("deaths");
 
     assert obj != null : "Deaths objective is null";
 
     obj.getScore(event.getEntity().getName()).setScore(event.getEntity().getStatistic(Statistic.DEATHS));
-    Bukkit.getOnlinePlayers().forEach(player -> player.setScoreboard(this.plugin.getDeathScoreboard()));
+    Bukkit.getOnlinePlayers().forEach(player -> player.setScoreboard(this.plugin.getScoreboard()));
   }
 
   @EventHandler
@@ -45,12 +46,12 @@ public class ScoreboardListener implements Listener {
     if (!this.plugin.isEnableHealth()) return;
     if (!(event.getEntity() instanceof Player player)) return;
 
-    Objective obj = this.plugin.getHealthScoreboard().getObjective("health");
+    Objective obj = this.plugin.getScoreboard().getObjective("health");
 
     assert obj != null : "Health objective is null";
 
     obj.getScore(player.getName()).setScore(Math.round((float) player.getHealth()));
-    Bukkit.getOnlinePlayers().forEach(player1 -> player1.setScoreboard(this.plugin.getHealthScoreboard()));
+    Bukkit.getOnlinePlayers().forEach(player1 -> player1.setScoreboard(this.plugin.getScoreboard()));
   }
 
   @EventHandler
@@ -59,11 +60,11 @@ public class ScoreboardListener implements Listener {
     if (!this.plugin.isEnableHealth()) return;
     if (!(event.getEntity() instanceof Player player)) return;
 
-    Objective obj = this.plugin.getHealthScoreboard().getObjective("health");
+    Objective obj = this.plugin.getScoreboard().getObjective("health");
 
     assert obj != null : "Health objective is null";
 
     obj.getScore(player.getName()).setScore(Math.round((float) player.getHealth()));
-    Bukkit.getOnlinePlayers().forEach(player1 -> player1.setScoreboard(this.plugin.getHealthScoreboard()));
+    Bukkit.getOnlinePlayers().forEach(player1 -> player1.setScoreboard(this.plugin.getScoreboard()));
   }
 }
