@@ -1,0 +1,12 @@
+{
+  "name": "server_system-1.19-maven",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Shioku1337/VanillaUtility.git"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "prettier-plugin-java": "^2.6.4"
+  }
+}

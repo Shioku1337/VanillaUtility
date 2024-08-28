@@ -112,6 +112,9 @@ buildNumber.properties
 # Common working directory
 run/
 
+
+node_modules
+
 # Server
 /server/**
 /server/server.properties
