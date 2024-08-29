@@ -11,7 +11,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.scoreboard.Objective;
 
 @RequiredArgsConstructor
@@ -37,7 +36,6 @@ public class ScoreboardListener implements Listener {
     assert obj != null : "Deaths objective is null";
 
     obj.getScore(event.getEntity().getName()).setScore(event.getEntity().getStatistic(Statistic.DEATHS));
-    Bukkit.getOnlinePlayers().forEach(player -> player.setScoreboard(this.plugin.getScoreboard()));
   }
 
   @EventHandler
@@ -51,7 +49,6 @@ public class ScoreboardListener implements Listener {
     assert obj != null : "Health objective is null";
 
     obj.getScore(player.getName()).setScore(Math.round((float) player.getHealth()));
-    Bukkit.getOnlinePlayers().forEach(player1 -> player1.setScoreboard(this.plugin.getScoreboard()));
   }
 
   @EventHandler
@@ -65,6 +62,5 @@ public class ScoreboardListener implements Listener {
     assert obj != null : "Health objective is null";
 
     obj.getScore(player.getName()).setScore(Math.round((float) player.getHealth()));
-    Bukkit.getOnlinePlayers().forEach(player1 -> player1.setScoreboard(this.plugin.getScoreboard()));
   }
 }

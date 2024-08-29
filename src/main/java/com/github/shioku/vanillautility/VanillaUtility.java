@@ -84,6 +84,11 @@ public final class VanillaUtility extends JavaPlugin {
 
     Bukkit.getServer().getPluginManager().registerEvents(new ScoreboardListener(this), this);
 
+    Bukkit.getOnlinePlayers()
+      .forEach(player -> {
+        player.setScoreboard(this.scoreboard);
+      });
+
     sender.sendMessage(
       PREFIX +
       formatColors("&6" + this.getDescription().getName() + " &7has been &aenabled &7with &6v" + this.getDescription().getVersion() + "&7.&r")
@@ -118,7 +123,6 @@ public final class VanillaUtility extends JavaPlugin {
             .forEach(player -> {
               Score score = objective.getScore(player.getName());
               score.setScore(Math.round((float) player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 60));
-              player.setScoreboard(this.scoreboard);
             }),
         0,
         5 * 20
@@ -126,7 +130,7 @@ public final class VanillaUtility extends JavaPlugin {
   }
 
   private void registerHealthScoreboard() {
-    Objective obj = this.scoreboard.registerNewObjective("health", Criteria.DUMMY, ChatColor.RED + "❤");
+    Objective obj = this.scoreboard.registerNewObjective("health", Criteria.HEALTH, ChatColor.RED + "❤");
 
     obj.setDisplaySlot(DisplaySlot.BELOW_NAME);
 
@@ -134,7 +138,6 @@ public final class VanillaUtility extends JavaPlugin {
       .forEach(player -> {
         Score score = obj.getScore(player.getName());
         score.setScore(Math.round((float) player.getHealth()));
-        player.setScoreboard(this.scoreboard);
       });
   }
 
@@ -147,7 +150,6 @@ public final class VanillaUtility extends JavaPlugin {
       .forEach(player -> {
         Score score = objective.getScore(player.getName());
         score.setScore(player.getStatistic(Statistic.DEATHS));
-        player.setScoreboard(this.scoreboard);
       });
   }
 
