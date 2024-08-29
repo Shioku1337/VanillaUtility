@@ -2,6 +2,7 @@ package com.github.shioku.vanillautility;
 
 import com.github.shioku.vanillautility.cmds.ChunkLoaderCmd;
 import com.github.shioku.vanillautility.listeners.ScoreboardListener;
+import com.github.shioku.vanillautility.updatechecker.UpdateChecker;
 import java.util.List;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -17,10 +18,11 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
 
 @Getter
 public final class VanillaUtility extends JavaPlugin {
+
+  private boolean enablePlugin = true;
 
   public static String PREFIX = formatColors("&8[&3Admin&8] &7");
 
@@ -29,9 +31,29 @@ public final class VanillaUtility extends JavaPlugin {
   private Scoreboard scoreboard = null;
 
   @Override
+  public void onLoad() {
+    saveDefaultConfig();
+
+    boolean enableUpdateCheck = getConfig().getBoolean("enableUpdateCheck");
+
+    if (!enableUpdateCheck) return;
+
+    boolean hasUpdate = UpdateChecker.checkUpdates(this);
+
+    // Condition that is returned by checkUpdates
+    if (hasUpdate) this.enablePlugin = false;
+  }
+
+  @Override
   @SuppressWarnings("ConstantConditions")
   public void onEnable() {
-    saveDefaultConfig();
+    if (!enablePlugin) {
+      this.setEnabled(false);
+      getLogger().severe("There is an update for the plugin and the checks are enabled. The plugin has been disabled.");
+      getLogger().severe("The checks can be disabled in your config.yml");
+      return;
+    }
+
     // Plugin startup logic
     ConsoleCommandSender sender = Bukkit.getServer().getConsoleSender();
 

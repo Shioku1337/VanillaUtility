@@ -5,3 +5,8 @@ playtimeTitleColor: 'a'
 
 # Enables a health display below a player's name
 enableHealth: true
+
+# Enables an update check for this plugin. If it there is an update, it will be disabled. (Except for Patches, enable failOnPatch for that)
+# (This is a bit wonky and made kinda hacky bc the version has to be in the body (and nothing else), but it works ig)
+enableUpdateCheck: true
+failOnPatch: false
