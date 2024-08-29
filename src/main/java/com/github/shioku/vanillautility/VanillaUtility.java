@@ -126,7 +126,7 @@ public final class VanillaUtility extends JavaPlugin {
   }
 
   private void registerHealthScoreboard() {
-    Objective obj = this.scoreboard.registerNewObjective("health", Criteria.DUMMY, "Health");
+    Objective obj = this.scoreboard.registerNewObjective("health", Criteria.DUMMY, ChatColor.RED + "❤");
 
     obj.setDisplaySlot(DisplaySlot.BELOW_NAME);
 
