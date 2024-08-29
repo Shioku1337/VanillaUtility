@@ -2,11 +2,11 @@ package com.github.shioku.vanillautility.listeners;
 
 import com.github.shioku.vanillautility.VanillaUtility;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -20,17 +20,23 @@ public class ScoreboardListener implements Listener {
 
   @EventHandler
   public void onJoin(PlayerJoinEvent event) {
-    Objective obj = this.plugin.getScoreboard().getObjective("playtime");
+    Objective playTimeObjective = this.plugin.getScoreboard().getObjective("playtime");
 
-    assert obj != null : "Playtime objective is null";
+    assert playTimeObjective != null : "Playtime objective is null";
 
-    obj.getScore(event.getPlayer().getName()).setScore(event.getPlayer().getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 60);
-    Bukkit.getOnlinePlayers().forEach(player -> player.setScoreboard(this.plugin.getScoreboard()));
+    playTimeObjective.getScore(event.getPlayer().getName()).setScore(event.getPlayer().getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 60);
+
+    Objective healthObjective = this.plugin.getScoreboard().getObjective("health");
+
+    assert healthObjective != null : "Health objective is null";
+
+    healthObjective.getScore(event.getPlayer().getName()).setScore(Math.round((float) event.getPlayer().getHealth()));
+
+    event.getPlayer().setScoreboard(this.plugin.getScoreboard());
   }
 
   @EventHandler
   public void onPlayerDeath(PlayerDeathEvent event) {
-    // Maybe only need to set for event player as in onJoin?
     Objective obj = this.plugin.getScoreboard().getObjective("deaths");
 
     assert obj != null : "Deaths objective is null";
@@ -48,12 +54,15 @@ public class ScoreboardListener implements Listener {
 
     assert obj != null : "Health objective is null";
 
-    obj.getScore(player.getName()).setScore(Math.round((float) player.getHealth()));
+    double finalHealth = player.getHealth() - event.getFinalDamage();
+
+    if (finalHealth < 0) finalHealth = 0;
+
+    obj.getScore(player.getName()).setScore(Math.round((float) finalHealth));
   }
 
   @EventHandler
   public void onRegainHealth(EntityRegainHealthEvent event) {
-    // Maybe only need to set for event player as in onJoin?
     if (!this.plugin.isEnableHealth()) return;
     if (!(event.getEntity() instanceof Player player)) return;
 
@@ -61,6 +70,10 @@ public class ScoreboardListener implements Listener {
 
     assert obj != null : "Health objective is null";
 
-    obj.getScore(player.getName()).setScore(Math.round((float) player.getHealth()));
+    double finalHealth = player.getHealth() + event.getAmount();
+
+    if (finalHealth > 20.0) finalHealth = 20.0;
+
+    obj.getScore(player.getName()).setScore(Math.round((float) finalHealth));
   }
 }
