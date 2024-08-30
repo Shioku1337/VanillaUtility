@@ -38,10 +38,7 @@ public final class VanillaUtility extends JavaPlugin {
 
     if (!enableUpdateCheck) return;
 
-    boolean hasUpdate = UpdateChecker.checkUpdates(this);
-
-    // Condition that is returned by checkUpdates
-    if (hasUpdate) this.enablePlugin = false;
+    this.enablePlugin = !UpdateChecker.checkUpdates(this);
   }
 
   @Override
@@ -135,8 +132,8 @@ public final class VanillaUtility extends JavaPlugin {
     obj.setDisplaySlot(DisplaySlot.BELOW_NAME);
     Bukkit.getOnlinePlayers()
       .forEach(player -> {
-          Score score = obj.getScore(player.getName());
-          score.setScore(Math.round((float) player.getHealth()));
+        Score score = obj.getScore(player.getName());
+        score.setScore(Math.round((float) player.getHealth()));
       });
   }
 
