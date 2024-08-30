@@ -3,10 +3,12 @@ package com.github.shioku.vanillautility.cmds;
 import static com.github.shioku.vanillautility.VanillaUtility.PREFIX;
 
 import com.github.shioku.vanillautility.misc.ComponentUtil;
+import com.github.shioku.vanillautility.misc.StringUtil;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
@@ -21,29 +23,26 @@ import org.jetbrains.annotations.Nullable;
 
 public class AdvancementListCmd implements TabExecutor {
 
+  private final BaseComponent[] infoComponent = new ComponentBuilder(PREFIX + "You can find the needed ids on the ")
+    .append("Minecraft Advancement List")
+    .color(ChatColor.DARK_AQUA)
+    .underlined(true)
+    .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://minecraft.fandom.com/wiki/Advancement#List_of_advancements"))
+    .append("! The column \"Resource Location\" is the correct input!")
+    .color(ChatColor.GRAY)
+    .underlined(false)
+    .create();
+
   @Override
-  @SuppressWarnings("")
   public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
     if (!(sender instanceof Player player)) {
-      sender.sendMessage(PREFIX + "Only players can use this command.");
+      sender.sendMessage(PREFIX + "Only players can list advancements.");
       return true;
     }
 
     if (args.length != 1) {
-      sender.sendMessage(PREFIX + "Syntaxerror! Please use: &c" + cmd.getUsage());
-      sender
-        .spigot()
-        .sendMessage(
-          new ComponentBuilder(PREFIX + "You can find the needed ids on the ")
-            .append("Minecraft Advancement List")
-            .color(ChatColor.DARK_AQUA)
-            .underlined(true)
-            .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://minecraft.fandom.com/wiki/Advancement#List_of_advancements"))
-            .append("! The column \"Resource Location\" is the correct input!")
-            .color(ChatColor.GRAY)
-            .underlined(false)
-            .create()
-        );
+      sender.sendMessage(StringUtil.getSyntaxError(cmd));
+      sender.spigot().sendMessage(this.infoComponent);
       return false;
     }
 
@@ -51,19 +50,7 @@ public class AdvancementListCmd implements TabExecutor {
 
     if (advancement == null) {
       sender.sendMessage(PREFIX + "Syntaxerror, wrong advancement key! Please use: &c" + cmd.getUsage());
-      sender
-        .spigot()
-        .sendMessage(
-          new ComponentBuilder(PREFIX + "You can find the needed ids on the ")
-            .append("Minecraft Advancement List")
-            .color(ChatColor.DARK_AQUA)
-            .underlined(true)
-            .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://minecraft.fandom.com/wiki/Advancement#List_of_advancements"))
-            .append("! The column \"Resource Location\" is the correct input!")
-            .color(ChatColor.GRAY)
-            .underlined(false)
-            .create()
-        );
+      sender.spigot().sendMessage(this.infoComponent);
       return true;
     }
 

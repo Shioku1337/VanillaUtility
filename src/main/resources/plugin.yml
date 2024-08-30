@@ -8,7 +8,7 @@ commands:
     aliases: [cl]
     description: "Load and unload the chunk you're standing in."
     permission: "vu.chunkloader"
-    usage: "/<label> add,remove"
+    usage: "/<label> add,remove [all,(x,z)]"
   advancementlist:
     aliases: [advl]
     description: "List specific advancements to show the progress you've made and what is missing."
