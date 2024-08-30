@@ -1,5 +1,6 @@
 package com.github.shioku.vanillautility;
 
+import com.github.shioku.vanillautility.cmds.AdvancementListCmd;
 import com.github.shioku.vanillautility.cmds.ChunkLoaderCmd;
 import com.github.shioku.vanillautility.listeners.ScoreboardListener;
 import com.github.shioku.vanillautility.updatechecker.UpdateChecker;
@@ -69,7 +70,9 @@ public final class VanillaUtility extends JavaPlugin {
     this.enableHealth = getConfig().getBoolean("enableHealth");
 
     getCommand("chunkloader").setExecutor(new ChunkLoaderCmd(this));
+    getCommand("advancementlist").setExecutor(new AdvancementListCmd());
     getCommand("chunkloader").setTabCompleter(new ChunkLoaderCmd(this));
+    getCommand("advancementlist").setTabCompleter(new AdvancementListCmd());
     sender.sendMessage(PREFIX + formatColors("Registered commands."));
 
     this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();

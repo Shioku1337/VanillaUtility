@@ -22,7 +22,7 @@ public class UpdateChecker {
     JsonObject json = new Gson().fromJson(response, JsonObject.class);
 
     try {
-      String removeVersionString = json.get("tag_name").getAsString().replaceAll("[A-Za-z-]", "");
+      String removeVersionString = json.get("tag_name").getAsString();
       VersionNumber remoteVersion = VersionNumber.fromString(removeVersionString);
 
       String localVersionString = plugin.getDescription().getVersion();
