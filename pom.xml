@@ -6,7 +6,7 @@
 
     <groupId>com.github.shioku</groupId>
     <artifactId>VanillaUtility</artifactId>
-    <version>1.4.0-PRE</version>
+    <version>1.4.0</version>
     <packaging>jar</packaging>
 
     <name>VanillaUtility</name>

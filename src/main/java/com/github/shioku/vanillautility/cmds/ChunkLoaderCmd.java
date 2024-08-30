@@ -90,6 +90,7 @@ public class ChunkLoaderCmd implements TabExecutor {
 
       player.getWorld().removePluginChunkTickets(this.plugin);
       player.sendMessage(PREFIX + formatColors("All chunks in your current world have been &cchunk-unloaded&7."));
+      return;
     }
 
     // set X,Z

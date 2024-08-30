@@ -1,6 +1,7 @@
 package com.github.shioku.vanillautility.cmds;
 
 import static com.github.shioku.vanillautility.VanillaUtility.PREFIX;
+import static com.github.shioku.vanillautility.VanillaUtility.formatColors;
 
 import com.github.shioku.vanillautility.misc.ComponentUtil;
 import com.github.shioku.vanillautility.misc.StringUtil;
@@ -11,6 +12,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
@@ -43,7 +45,7 @@ public class AdvancementListCmd implements TabExecutor {
     if (args.length != 1) {
       sender.sendMessage(StringUtil.getSyntaxError(cmd));
       sender.spigot().sendMessage(this.infoComponent);
-      return false;
+      return true;
     }
 
     Advancement advancement = Bukkit.getAdvancement(NamespacedKey.minecraft(args[0]));
@@ -54,12 +56,17 @@ public class AdvancementListCmd implements TabExecutor {
       return true;
     }
 
-    String advancementTitle = ComponentUtil.advancementTitle(advancement).getTranslate();
+    TranslatableComponent advancementTitle = ComponentUtil.advancementTitle(advancement);
     List<String> remainingCriteria = new ArrayList<>(player.getAdvancementProgress(advancement).getRemainingCriteria());
 
-    player.sendMessage(PREFIX + "The following progess is still missing from the advancement: \"" + advancementTitle + "\"");
+    if (remainingCriteria.isEmpty()) {
+      player.sendMessage(PREFIX + formatColors("&aContratulations! &7You have already finished this advancement!"));
+      return true;
+    }
+
+    player.spigot().sendMessage(new ComponentBuilder(PREFIX + "The following progess is still missing from the advancement: \"").append(advancementTitle).color(ChatColor.GREEN).append("\"").color(ChatColor.GRAY).create());
     for (String criteria : remainingCriteria) {
-      player.sendMessage(PREFIX + criteria);
+      player.sendMessage(PREFIX + formatColors("Criteria: &6") + criteria);
     }
 
     return true;
@@ -67,7 +74,7 @@ public class AdvancementListCmd implements TabExecutor {
 
   @Override
   public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
-    if (args.length != 1) return List.of();
+    if (!(sender instanceof Player player) || args.length != 1) return List.of();
 
     Iterator<Advancement> advancementIterator = Bukkit.advancementIterator();
 
@@ -75,6 +82,8 @@ public class AdvancementListCmd implements TabExecutor {
 
     while (advancementIterator.hasNext()) {
       Advancement adv = advancementIterator.next();
+      if (player.getAdvancementProgress(adv).isDone()) continue;
+      if (adv.getKey().getKey().startsWith("recipe")) continue;
       allAdvKeys.add(adv.getKey().getKey());
     }
 
