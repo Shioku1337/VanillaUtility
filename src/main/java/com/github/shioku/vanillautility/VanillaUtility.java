@@ -125,7 +125,7 @@ public final class VanillaUtility extends JavaPlugin {
               score.setScore(Math.round((float) player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 60));
             }),
         0,
-        5 * 20
+        60 * 20
       );
   }
 
