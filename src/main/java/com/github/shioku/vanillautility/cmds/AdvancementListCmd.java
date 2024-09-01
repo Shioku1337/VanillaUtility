@@ -87,6 +87,6 @@ public class AdvancementListCmd implements TabExecutor {
       allAdvKeys.add(adv.getKey().getKey());
     }
 
-    return allAdvKeys;
+    return allAdvKeys.stream().filter(str -> str.contains(args[0])).toList();
   }
 }

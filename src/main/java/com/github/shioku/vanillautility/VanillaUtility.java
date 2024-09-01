@@ -99,7 +99,7 @@ public final class VanillaUtility extends JavaPlugin {
     Objective objective =
       this.scoreboard.registerNewObjective(
           "playtime",
-          Criteria.statistic(Statistic.PLAY_ONE_MINUTE),
+          Criteria.DUMMY,
           formatColors("&" + this.getConfig().getString("playtimeTitleColor") + "Playtime")
         );
 
@@ -136,15 +136,9 @@ public final class VanillaUtility extends JavaPlugin {
   }
 
   private void registerScoreboardDeaths() {
-    Objective objective = this.scoreboard.registerNewObjective("deaths", Criteria.statistic(Statistic.DEATHS), "Deaths");
+    Objective objective = this.scoreboard.registerNewObjective("deaths", Criteria.DUMMY, "Deaths");
 
     objective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
-
-    Bukkit.getOnlinePlayers()
-      .forEach(player -> {
-        Score score = objective.getScore(player.getName());
-        score.setScore(player.getStatistic(Statistic.DEATHS));
-      });
   }
 
   public static String formatColors(String arg) {

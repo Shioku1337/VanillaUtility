@@ -32,6 +32,12 @@ public class ScoreboardListener implements Listener {
 
     healthObjective.getScore(event.getPlayer().getName()).setScore(Math.round((float) event.getPlayer().getHealth()));
 
+    Objective deathsObjective = this.plugin.getScoreboard().getObjective("deaths");
+
+    assert deathsObjective != null : "Deaths objective is null";
+
+    deathsObjective.getScore(event.getPlayer().getName()).setScore(event.getPlayer().getStatistic(Statistic.DEATHS));
+
     event.getPlayer().setScoreboard(this.plugin.getScoreboard());
   }
 
