@@ -133,11 +133,6 @@ public final class VanillaUtility extends JavaPlugin {
     Objective obj = this.scoreboard.registerNewObjective("health", Criteria.DUMMY, ChatColor.RED + "❤");
 
     obj.setDisplaySlot(DisplaySlot.BELOW_NAME);
-    Bukkit.getOnlinePlayers()
-      .forEach(player -> {
-        Score score = obj.getScore(player.getName());
-        score.setScore(Math.round((float) player.getHealth()));
-      });
   }
 
   private void registerScoreboardDeaths() {
