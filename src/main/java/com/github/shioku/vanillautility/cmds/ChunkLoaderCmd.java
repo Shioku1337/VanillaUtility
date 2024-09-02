@@ -23,12 +23,12 @@ public class ChunkLoaderCmd implements TabExecutor {
   @Override
   public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
     if (!(sender instanceof Player player)) {
-      sender.sendMessage(PREFIX + formatColors("Chunks can only be chunk-loaded by players!"));
+      this.plugin.getLogger().info("Chunks can only be chunk-loaded by players!");
       return true;
     }
 
     if (args.length < 1 || args.length > 3) {
-      sender.sendMessage(StringUtil.getSyntaxError(cmd));
+      player.sendMessage(StringUtil.getSyntaxError(cmd));
       return true;
     }
 

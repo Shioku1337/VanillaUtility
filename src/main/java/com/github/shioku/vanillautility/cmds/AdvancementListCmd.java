@@ -8,6 +8,8 @@ import com.github.shioku.vanillautility.misc.StringUtil;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
+import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -23,7 +25,10 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@RequiredArgsConstructor
 public class AdvancementListCmd implements TabExecutor {
+
+  private final Logger logger;
 
   private final BaseComponent[] infoComponent = new ComponentBuilder(PREFIX + "You can find the needed ids on the ")
     .append("Minecraft Advancement List")
@@ -38,21 +43,21 @@ public class AdvancementListCmd implements TabExecutor {
   @Override
   public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
     if (!(sender instanceof Player player)) {
-      sender.sendMessage(PREFIX + "Only players can list advancements.");
+      logger.info("Only players can list advancements.");
       return true;
     }
 
     if (args.length != 1) {
-      sender.sendMessage(StringUtil.getSyntaxError(cmd));
-      sender.spigot().sendMessage(this.infoComponent);
+      player.sendMessage(StringUtil.getSyntaxError(cmd));
+      player.spigot().sendMessage(this.infoComponent);
       return true;
     }
 
     Advancement advancement = Bukkit.getAdvancement(NamespacedKey.minecraft(args[0]));
 
     if (advancement == null) {
-      sender.sendMessage(PREFIX + "Syntaxerror, wrong advancement key! Please use: &c" + cmd.getUsage());
-      sender.spigot().sendMessage(this.infoComponent);
+      player.sendMessage(PREFIX + "Syntaxerror, wrong advancement key! Please use: &c" + cmd.getUsage());
+      player.spigot().sendMessage(this.infoComponent);
       return true;
     }
 
@@ -64,7 +69,16 @@ public class AdvancementListCmd implements TabExecutor {
       return true;
     }
 
-    player.spigot().sendMessage(new ComponentBuilder(PREFIX + "The following progess is still missing from the advancement: \"").append(advancementTitle).color(ChatColor.GREEN).append("\"").color(ChatColor.GRAY).create());
+    player
+      .spigot()
+      .sendMessage(
+        new ComponentBuilder(PREFIX + "The following progess is still missing from the advancement: \"")
+          .append(advancementTitle)
+          .color(ChatColor.GREEN)
+          .append("\"")
+          .color(ChatColor.GRAY)
+          .create()
+      );
     for (String criteria : remainingCriteria) {
       player.sendMessage(PREFIX + formatColors("Criteria: &6") + criteria);
     }

@@ -5,12 +5,12 @@ import com.github.shioku.vanillautility.cmds.ChunkLoaderCmd;
 import com.github.shioku.vanillautility.listeners.ScoreboardListener;
 import com.github.shioku.vanillautility.updatechecker.UpdateChecker;
 import java.util.List;
+import java.util.logging.Logger;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -52,12 +52,7 @@ public final class VanillaUtility extends JavaPlugin {
       return;
     }
 
-    // Plugin startup logic
-    ConsoleCommandSender sender = Bukkit.getServer().getConsoleSender();
-
-    sender.sendMessage(
-      PREFIX + formatColors("&aEnabling &6" + getDescription().getName() + " &7with &6v" + getDescription().getVersion() + "&7.&r")
-    );
+    Logger logger = getLogger();
 
     PluginDescriptionFile descriptionFile = this.getDescription();
     for (String commandName : descriptionFile.getCommands().keySet()) {
@@ -65,22 +60,22 @@ public final class VanillaUtility extends JavaPlugin {
       if (command == null) continue;
       command.setUsage(command.getUsage().replace("<label>", command.getLabel()));
     }
-    sender.sendMessage(PREFIX + formatColors("Set permission and usage messages."));
+    logger.info("Set permission and usage messages.");
 
     this.enableHealth = getConfig().getBoolean("enableHealth");
 
     getCommand("chunkloader").setExecutor(new ChunkLoaderCmd(this));
-    getCommand("advancementlist").setExecutor(new AdvancementListCmd());
+    getCommand("advancementlist").setExecutor(new AdvancementListCmd(this.getLogger()));
     getCommand("chunkloader").setTabCompleter(new ChunkLoaderCmd(this));
-    getCommand("advancementlist").setTabCompleter(new AdvancementListCmd());
-    sender.sendMessage(PREFIX + formatColors("Registered commands."));
+    getCommand("advancementlist").setTabCompleter(new AdvancementListCmd(this.getLogger()));
+    logger.info("Registered commands.");
 
     this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 
     registerScoreboardPlaytime();
     if (this.enableHealth) registerHealthScoreboard();
     registerScoreboardDeaths();
-    sender.sendMessage(PREFIX + formatColors("Registered Scoreboards."));
+    logger.info("Registered Scoreboards.");
 
     Bukkit.getServer().getPluginManager().registerEvents(new ScoreboardListener(this), this);
 
@@ -89,10 +84,7 @@ public final class VanillaUtility extends JavaPlugin {
         player.setScoreboard(this.scoreboard);
       });
 
-    sender.sendMessage(
-      PREFIX +
-      formatColors("&6" + this.getDescription().getName() + " &7has been &aenabled &7with &6v" + this.getDescription().getVersion() + "&7.&r")
-    );
+    logger.info(this.getDescription().getName() + " has been enabled with v" + this.getDescription().getVersion() + ".");
   }
 
   private void registerScoreboardPlaytime() {
