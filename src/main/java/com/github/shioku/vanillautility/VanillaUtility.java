@@ -45,21 +45,25 @@ public final class VanillaUtility extends JavaPlugin {
   @Override
   @SuppressWarnings("ConstantConditions")
   public void onEnable() {
+    Logger logger = getLogger();
+
     if (!enablePlugin) {
       this.setEnabled(false);
-      getLogger().severe("There is an update for the plugin and the checks are enabled. The plugin has been disabled.");
-      getLogger().severe("The checks can be disabled in your config.yml");
+      logger.severe("There is an update for the plugin and the checks are enabled. The plugin has been disabled.");
+      logger.severe("The checks can be disabled in your config.yml");
       return;
     }
 
-    Logger logger = getLogger();
-
     PluginDescriptionFile descriptionFile = this.getDescription();
+
     for (String commandName : descriptionFile.getCommands().keySet()) {
       PluginCommand command = this.getCommand(commandName);
+
       if (command == null) continue;
+
       command.setUsage(command.getUsage().replace("<label>", command.getLabel()));
     }
+
     logger.info("Set permission and usage messages.");
 
     this.enableHealth = getConfig().getBoolean("enableHealth");
