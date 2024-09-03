@@ -3,7 +3,6 @@ package com.github.shioku.vanillautility.listeners;
 import com.github.shioku.vanillautility.VanillaUtility;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Chunk;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -20,18 +19,21 @@ public class ChunkListener implements Listener {
   @EventHandler
   public void onWorldLoad(WorldLoadEvent event) {
     plugin.setChunkConfig(YamlConfiguration.loadConfiguration(plugin.getChunkFile()));
-    Chunk[] chunks = plugin.getChunkConfig().getObject("chunks", Chunk[].class, new Chunk[0]);
+    Chunk[] chunks = plugin.getChunkConfig().getObject("chunks." + event.getWorld().getUID(), Chunk[].class, new Chunk[0]);
 
     for (Chunk chunk : chunks) {
+      if (!event.getWorld().getUID().equals(chunk.getWorld().getUID())) continue;
+
       chunk.addPluginChunkTicket(this.plugin);
     }
   }
 
   @EventHandler
   public void onWorldUnload(WorldUnloadEvent event) {
-    List<Chunk> chunks = new ArrayList<>(event.getWorld().getPluginChunkTickets().get(this.plugin));
+    Chunk[] chunks = new ArrayList<>(event.getWorld().getPluginChunkTickets().get(this.plugin)).toArray(new Chunk[0]);
 
-    plugin.getChunkConfig().set("chunks", chunks);
+    plugin.getChunkConfig().set("chunks." + event.getWorld().getUID(), chunks);
+
     try {
       plugin.getChunkConfig().save(plugin.getChunkFile());
     } catch (IOException e) {
