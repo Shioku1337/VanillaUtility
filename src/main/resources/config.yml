@@ -1,12 +1,11 @@
-# https://minecraft.fandom.com/wiki/Formatting_codes#Color_codes for color codes. use the code column without the paragraph symbol
-
 # Changes the title color of the sidebar playtime scoreboard
-playtimeTitleColor: 'a'
+## Valid colors are:
+##  BLACK, DARK_BLUE, DARK_GREEN, DARK_AQUA, DARK_RED, DARK_PURPLE, GOLD, GRAY, DARK_GRAY, BLUE, GREEN, AQUA, RED, LIGHT_PURPLE, YELLOW, WHITE
+playtimeTitleColor: "AQUA"
 
 # Enables a health display below a player's name
 enableHealth: true
 
 # Enables an update check for this plugin. If it there is an update, it will be disabled. (Except for Patches, enable failOnPatch for that)
-# (This is a bit wonky and made kinda hacky bc the version has to be in the body (and nothing else), but it works ig)
 enableUpdateCheck: true
 failOnPatch: false

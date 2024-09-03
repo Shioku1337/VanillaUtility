@@ -30,7 +30,7 @@ public class UpdateChecker {
 
       if (remoteVersion.major() > localVersion.major()) return true;
       if (remoteVersion.minor() > localVersion.minor()) return true;
-      if (remoteVersion.patch() > localVersion.patch() && plugin.getConfig().getBoolean("failOnPatch")) return true;
+      if (remoteVersion.patch() > localVersion.patch() && plugin.getConfig().getBoolean("failOnPatch", false)) return true;
     } catch (Exception e) {
       plugin.getLogger().severe("Failed to check Updates! Probably invalid tag name. Developer's fault.");
     }

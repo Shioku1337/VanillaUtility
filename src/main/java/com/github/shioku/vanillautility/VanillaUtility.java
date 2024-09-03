@@ -4,14 +4,18 @@ import com.github.shioku.vanillautility.cmds.AdvancementListCmd;
 import com.github.shioku.vanillautility.cmds.ChunkLoaderCmd;
 import com.github.shioku.vanillautility.listeners.ScoreboardListener;
 import com.github.shioku.vanillautility.updatechecker.UpdateChecker;
+import java.io.File;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Criteria;
@@ -31,11 +35,35 @@ public final class VanillaUtility extends JavaPlugin {
 
   private Scoreboard scoreboard = null;
 
+  private File chunkFile;
+
+  @Setter
+  private YamlConfiguration chunkConfig;
+
+  public static final Set<String> VALID_COLORS = Set.of(
+    "BLACK",
+    "DARK_BLUE",
+    "DARK_GREEN",
+    "DARK_AQUA",
+    "DARK_RED",
+    "DARK_PURPLE",
+    "GOLD",
+    "GRAY",
+    "DARK_GRAY",
+    "BLUE",
+    "GREEN",
+    "AQUA",
+    "RED",
+    "LIGHT_PURPLE",
+    "YELLOW",
+    "WHITE"
+  );
+
   @Override
   public void onLoad() {
     saveDefaultConfig();
 
-    boolean enableUpdateCheck = getConfig().getBoolean("enableUpdateCheck");
+    boolean enableUpdateCheck = getConfig().getBoolean("enableUpdateCheck", true);
 
     if (!enableUpdateCheck) return;
 
@@ -46,6 +74,14 @@ public final class VanillaUtility extends JavaPlugin {
   @SuppressWarnings("ConstantConditions")
   public void onEnable() {
     Logger logger = getLogger();
+
+    chunkFile = new File(this.getDataFolder(), "data/chunks.yml");
+
+    if (!chunkFile.exists()) {
+      saveResource("data/chunks.yml", false);
+    }
+
+    this.chunkConfig = YamlConfiguration.loadConfiguration(chunkFile);
 
     if (!enablePlugin) {
       this.setEnabled(false);
@@ -66,7 +102,7 @@ public final class VanillaUtility extends JavaPlugin {
 
     logger.info("Set permission and usage messages.");
 
-    this.enableHealth = getConfig().getBoolean("enableHealth");
+    this.enableHealth = getConfig().getBoolean("enableHealth", true);
 
     getCommand("chunkloader").setExecutor(new ChunkLoaderCmd(this));
     getCommand("advancementlist").setExecutor(new AdvancementListCmd(this.getLogger()));
@@ -92,12 +128,15 @@ public final class VanillaUtility extends JavaPlugin {
   }
 
   private void registerScoreboardPlaytime() {
-    Objective objective =
-      this.scoreboard.registerNewObjective(
-          "playtime",
-          Criteria.DUMMY,
-          formatColors("&" + this.getConfig().getString("playtimeTitleColor") + "Playtime")
-        );
+    String configColor = this.getConfig().getString("playtimeTitleColor", "AQUA");
+
+    if (!VALID_COLORS.contains(configColor)) {
+      configColor = "AQUA";
+      getLogger().warning("Invalid color for \"playeTimeTitlecolor\" in config.yml.");
+      getLogger().warning("The default has been set to AQUA. To get rid of this message, enter a valid color name in the field.");
+    }
+
+    Objective objective = this.scoreboard.registerNewObjective("playtime", Criteria.DUMMY, ChatColor.valueOf(configColor) + "Playtime");
 
     objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 

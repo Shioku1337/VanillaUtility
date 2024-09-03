@@ -1,5 +1,5 @@
 name: VanillaUtility
-version: 1.4.2
+version: 1.5.0-pre
 main: com.github.shioku.vanillautility.VanillaUtility
 api-version: '1.21'
 website: 'https://github.com/Shioku1337/VanillaUtility/releases'
