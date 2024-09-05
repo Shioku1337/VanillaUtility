@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -78,17 +77,15 @@ public final class VanillaUtility extends JavaPlugin {
 
   @Override
   public void onEnable() {
-    Logger logger = getLogger();
-
-    // Check if Plugin chould be enabled
     if (!enablePlugin) {
       this.setEnabled(false);
-      logger.severe("There is an update for the plugin and the checks are enabled. The plugin has been disabled.");
-      logger.severe("The checks can be disabled in your config.yml");
+      getLogger().severe("There is an update for the plugin and the checks are enabled. The plugin has been disabled.");
+      getLogger().severe("The checks can be disabled in your config.yml");
       return;
     }
 
     setupChunkFile();
+
     setUsages();
 
     this.enableHealth = getConfig().getBoolean("enableHealth", true);
@@ -99,12 +96,7 @@ public final class VanillaUtility extends JavaPlugin {
 
     registerScoreboards();
 
-    Bukkit.getOnlinePlayers()
-      .forEach(player -> {
-        player.setScoreboard(this.scoreboard);
-      });
-
-    logger.info(this.getDescription().getName() + " has been enabled with v" + this.getDescription().getVersion() + ".");
+    getLogger().info(this.getDescription().getName() + " has been enabled with v" + this.getDescription().getVersion() + ".");
   }
 
   @Override
@@ -117,7 +109,7 @@ public final class VanillaUtility extends JavaPlugin {
 
     if (!VALID_COLORS.contains(configColor)) {
       configColor = "AQUA";
-      getLogger().warning("Invalid color for \"playeTimeTitlecolor\" in config.yml.");
+      getLogger().warning("Invalid color for \"playtimeTitleColor\" in config.yml.");
       getLogger().warning("The default has been set to AQUA. To get rid of this message, enter a valid color name in the field.");
     }
 
@@ -208,8 +200,6 @@ public final class VanillaUtility extends JavaPlugin {
   }
 
   private void loadPersistedChunksToMemory() {
-    // Load persisted chunks
-
     ConfigurationSection worldSection = chunkConfig.getConfigurationSection("chunks");
 
     if (worldSection == null) return;
