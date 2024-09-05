@@ -219,8 +219,6 @@ public final class VanillaUtility extends JavaPlugin {
       PERSISTED_CHUNKS.put(key, value);
     }
 
-    PERSISTED_CHUNKS.put("596cbc7e-bd06-4cdd-a51b-388aab3a0767", List.of("1,1", "5,1", "9,129", "11267341527, 12316"));
-
     getLogger().info("Loaded persisted chunks to memory.");
   }
 
