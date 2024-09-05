@@ -1,13 +1,13 @@
 package com.github.shioku.vanillautility.listeners;
 
+import static com.github.shioku.vanillautility.VanillaUtility.PERSISTED_CHUNKS;
+
 import com.github.shioku.vanillautility.VanillaUtility;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Chunk;
 import org.bukkit.World;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldLoadEvent;
@@ -22,7 +22,7 @@ public class ChunkListener implements Listener {
   public void onWorldLoad(WorldLoadEvent event) {
     World world = event.getWorld();
 
-    List<String> chunkXZ = plugin.getChunkConfig().getStringList("chunks." + world.getUID());
+    List<String> chunkXZ = PERSISTED_CHUNKS.get(world.getUID().toString());
 
     Chunk[] chunks = new Chunk[chunkXZ.size()];
 
@@ -57,14 +57,6 @@ public class ChunkListener implements Listener {
       chunkXZ.add(chunk.getX() + "," + chunk.getZ());
     }
 
-    plugin.getChunkConfig().set("chunks." + world.getUID(), chunkXZ);
-
-    try {
-      plugin.getChunkConfig().save(plugin.getChunkFile());
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-
-    plugin.setChunkConfig(YamlConfiguration.loadConfiguration(plugin.getChunkFile()));
+    PERSISTED_CHUNKS.put(world.getUID().toString(), chunkXZ);
   }
 }

@@ -5,7 +5,10 @@ import com.github.shioku.vanillautility.cmds.ChunkLoaderCmd;
 import com.github.shioku.vanillautility.listeners.ScoreboardListener;
 import com.github.shioku.vanillautility.updatechecker.UpdateChecker;
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 import lombok.Getter;
@@ -15,6 +18,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -59,6 +63,8 @@ public final class VanillaUtility extends JavaPlugin {
     "WHITE"
   );
 
+  public static Map<String, List<String>> PERSISTED_CHUNKS = new HashMap<>();
+
   @Override
   public void onLoad() {
     saveDefaultConfig();
@@ -71,18 +77,10 @@ public final class VanillaUtility extends JavaPlugin {
   }
 
   @Override
-  @SuppressWarnings("ConstantConditions")
   public void onEnable() {
     Logger logger = getLogger();
 
-    chunkFile = new File(this.getDataFolder(), "data/chunks.yml");
-
-    if (!chunkFile.exists()) {
-      saveResource("data/chunks.yml", false);
-    }
-
-    this.chunkConfig = YamlConfiguration.loadConfiguration(chunkFile);
-
+    // Check if Plugin chould be enabled
     if (!enablePlugin) {
       this.setEnabled(false);
       logger.severe("There is an update for the plugin and the checks are enabled. The plugin has been disabled.");
@@ -90,34 +88,16 @@ public final class VanillaUtility extends JavaPlugin {
       return;
     }
 
-    PluginDescriptionFile descriptionFile = this.getDescription();
-
-    for (String commandName : descriptionFile.getCommands().keySet()) {
-      PluginCommand command = this.getCommand(commandName);
-
-      if (command == null) continue;
-
-      command.setUsage(command.getUsage().replace("<label>", command.getLabel()));
-    }
-
-    logger.info("Set permission and usage messages.");
+    setupChunkFile();
+    setUsages();
 
     this.enableHealth = getConfig().getBoolean("enableHealth", true);
 
-    getCommand("chunkloader").setExecutor(new ChunkLoaderCmd(this));
-    getCommand("advancementlist").setExecutor(new AdvancementListCmd(this.getLogger()));
-    getCommand("chunkloader").setTabCompleter(new ChunkLoaderCmd(this));
-    getCommand("advancementlist").setTabCompleter(new AdvancementListCmd(this.getLogger()));
-    logger.info("Registered commands.");
+    loadPersistedChunksToMemory();
 
-    this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+    registerCommands();
 
-    registerScoreboardPlaytime();
-    if (this.enableHealth) registerHealthScoreboard();
-    registerScoreboardDeaths();
-    logger.info("Registered Scoreboards.");
-
-    Bukkit.getServer().getPluginManager().registerEvents(new ScoreboardListener(this), this);
+    registerScoreboards();
 
     Bukkit.getOnlinePlayers()
       .forEach(player -> {
@@ -125,6 +105,11 @@ public final class VanillaUtility extends JavaPlugin {
       });
 
     logger.info(this.getDescription().getName() + " has been enabled with v" + this.getDescription().getVersion() + ".");
+  }
+
+  @Override
+  public void onDisable() {
+    persistChunksToYAML();
   }
 
   private void registerScoreboardPlaytime() {
@@ -174,6 +159,91 @@ public final class VanillaUtility extends JavaPlugin {
     Objective objective = this.scoreboard.registerNewObjective("deaths", Criteria.DUMMY, "Deaths");
 
     objective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
+  }
+
+  private void setupChunkFile() {
+    chunkFile = new File(this.getDataFolder(), "data/chunks.yml");
+
+    if (!chunkFile.exists()) {
+      saveResource("data/chunks.yml", false);
+    }
+
+    this.chunkConfig = YamlConfiguration.loadConfiguration(chunkFile);
+  }
+
+  private void setUsages() {
+    PluginDescriptionFile descriptionFile = this.getDescription();
+
+    for (String commandName : descriptionFile.getCommands().keySet()) {
+      PluginCommand command = this.getCommand(commandName);
+
+      if (command == null) continue;
+
+      command.setUsage(command.getUsage().replace("<label>", command.getLabel()));
+    }
+
+    getLogger().info("Set permission and usage messages.");
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  private void registerCommands() {
+    // Register commands
+    getCommand("chunkloader").setExecutor(new ChunkLoaderCmd(this));
+    getCommand("advancementlist").setExecutor(new AdvancementListCmd(this.getLogger()));
+    getCommand("chunkloader").setTabCompleter(new ChunkLoaderCmd(this));
+    getCommand("advancementlist").setTabCompleter(new AdvancementListCmd(this.getLogger()));
+    getLogger().info("Registered commands.");
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  private void registerScoreboards() {
+    this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+
+    registerScoreboardPlaytime();
+    if (this.enableHealth) registerHealthScoreboard();
+    registerScoreboardDeaths();
+    getLogger().info("Registered Scoreboards.");
+
+    Bukkit.getServer().getPluginManager().registerEvents(new ScoreboardListener(this), this);
+  }
+
+  private void loadPersistedChunksToMemory() {
+    // Load persisted chunks
+
+    ConfigurationSection worldSection = chunkConfig.getConfigurationSection("chunks");
+
+    if (worldSection == null) return;
+
+    Map<String, List<String>> map = new HashMap<>();
+    Set<String> worldIds = worldSection.getKeys(false);
+
+    for (String worldId : worldIds) {
+      List<String> chunkList = worldSection.getStringList(worldId);
+      map.put(worldId, chunkList);
+    }
+
+    for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+      String key = entry.getKey();
+      List<String> value = entry.getValue();
+
+      PERSISTED_CHUNKS.put(key, value);
+    }
+
+    PERSISTED_CHUNKS.put("596cbc7e-bd06-4cdd-a51b-388aab3a0767", List.of("1,1", "5,1", "9,129", "11267341527, 12316"));
+
+    getLogger().info("Loaded persisted chunks to memory.");
+  }
+
+  private void persistChunksToYAML() {
+    chunkConfig.set("chunks", PERSISTED_CHUNKS);
+
+    try {
+      chunkConfig.save(chunkFile);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+    chunkConfig = YamlConfiguration.loadConfiguration(chunkFile);
   }
 
   public static String formatColors(String arg) {
