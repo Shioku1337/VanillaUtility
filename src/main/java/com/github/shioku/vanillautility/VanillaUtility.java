@@ -192,7 +192,7 @@ public final class VanillaUtility extends JavaPlugin {
     getCommand("advancementlist").setExecutor(new AdvancementListCmd(this.getLogger()));
     getCommand("chunkloader").setTabCompleter(new ChunkLoaderCmd(this));
     getCommand("advancementlist").setTabCompleter(new AdvancementListCmd(this.getLogger()));
-    getLogger().info("Registered commands.");
+    getLogger().info("Registered Commands.");
   }
 
   @SuppressWarnings("ConstantConditions")
