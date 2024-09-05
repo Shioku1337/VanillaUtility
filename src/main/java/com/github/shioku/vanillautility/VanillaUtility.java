@@ -204,19 +204,11 @@ public final class VanillaUtility extends JavaPlugin {
 
     if (worldSection == null) return;
 
-    Map<String, List<String>> map = new HashMap<>();
     Set<String> worldIds = worldSection.getKeys(false);
 
     for (String worldId : worldIds) {
       List<String> chunkList = worldSection.getStringList(worldId);
-      map.put(worldId, chunkList);
-    }
-
-    for (Map.Entry<String, List<String>> entry : map.entrySet()) {
-      String key = entry.getKey();
-      List<String> value = entry.getValue();
-
-      PERSISTED_CHUNKS.put(key, value);
+      PERSISTED_CHUNKS.put(worldId, chunkList);
     }
 
     getLogger().info("Loaded persisted chunks to memory.");
