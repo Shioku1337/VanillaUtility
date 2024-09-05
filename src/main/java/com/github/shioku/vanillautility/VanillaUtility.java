@@ -222,8 +222,6 @@ public final class VanillaUtility extends JavaPlugin {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-
-    chunkConfig = YamlConfiguration.loadConfiguration(chunkFile);
   }
 
   public static String formatColors(String arg) {
