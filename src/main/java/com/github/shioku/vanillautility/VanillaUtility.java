@@ -2,6 +2,7 @@ package com.github.shioku.vanillautility;
 
 import com.github.shioku.vanillautility.cmds.AdvancementListCmd;
 import com.github.shioku.vanillautility.cmds.ChunkLoaderCmd;
+import com.github.shioku.vanillautility.listeners.ChunkListener;
 import com.github.shioku.vanillautility.listeners.ScoreboardListener;
 import com.github.shioku.vanillautility.updatechecker.UpdateChecker;
 import java.io.File;
@@ -78,7 +79,7 @@ public final class VanillaUtility extends JavaPlugin {
   @Override
   public void onEnable() {
     if (!enablePlugin) {
-      this.setEnabled(false);
+      Bukkit.getPluginManager().disablePlugin(this);
       getLogger().severe("There is an update for the plugin and the checks are enabled. The plugin has been disabled.");
       getLogger().severe("The checks can be disabled in your config.yml");
       return;
@@ -95,6 +96,7 @@ public final class VanillaUtility extends JavaPlugin {
     registerCommands();
 
     registerScoreboards();
+    registerListeners();
 
     getLogger().info(this.getDescription().getName() + " has been enabled with v" + this.getDescription().getVersion() + ".");
   }
@@ -195,8 +197,11 @@ public final class VanillaUtility extends JavaPlugin {
     if (this.enableHealth) registerHealthScoreboard();
     registerScoreboardDeaths();
     getLogger().info("Registered Scoreboards.");
+  }
 
-    Bukkit.getServer().getPluginManager().registerEvents(new ScoreboardListener(this), this);
+  private void registerListeners() {
+    Bukkit.getPluginManager().registerEvents(new ScoreboardListener(this), this);
+    Bukkit.getPluginManager().registerEvents(new ChunkListener(this), this);
   }
 
   private void loadPersistedChunksToMemory() {
