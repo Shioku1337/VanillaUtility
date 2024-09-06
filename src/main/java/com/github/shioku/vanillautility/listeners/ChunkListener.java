@@ -1,6 +1,6 @@
 package com.github.shioku.vanillautility.listeners;
 
-import static com.github.shioku.vanillautility.VanillaUtility.PERSISTED_CHUNKS;
+import static com.github.shioku.vanillautility.VanillaUtility.LOADED_CHUNKS;
 
 import com.github.shioku.vanillautility.VanillaUtility;
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public class ChunkListener implements Listener {
   public void onWorldLoad(WorldLoadEvent event) {
     World world = event.getWorld();
 
-    List<String> chunkXZ = PERSISTED_CHUNKS.get(world.getUID().toString());
+    List<String> chunkXZ = LOADED_CHUNKS.get(world.getUID().toString());
 
     Chunk[] chunks = new Chunk[chunkXZ.size()];
 
@@ -57,6 +57,6 @@ public class ChunkListener implements Listener {
       chunkXZ.add(chunk.getX() + "," + chunk.getZ());
     }
 
-    PERSISTED_CHUNKS.put(world.getUID().toString(), chunkXZ);
+    LOADED_CHUNKS.put(world.getUID().toString(), chunkXZ);
   }
 }

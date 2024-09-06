@@ -62,7 +62,7 @@ public final class VanillaUtility extends JavaPlugin {
     "WHITE"
   );
 
-  public static Map<String, List<String>> PERSISTED_CHUNKS = new HashMap<>();
+  public static Map<String, List<String>> LOADED_CHUNKS = new HashMap<>();
 
   @Override
   public void onLoad() {
@@ -208,14 +208,14 @@ public final class VanillaUtility extends JavaPlugin {
 
     for (String worldId : worldIds) {
       List<String> chunkList = worldSection.getStringList(worldId);
-      PERSISTED_CHUNKS.put(worldId, chunkList);
+      LOADED_CHUNKS.put(worldId, chunkList);
     }
 
     getLogger().info("Loaded persisted chunks to memory.");
   }
 
   private void persistChunksToYAML() {
-    chunkConfig.set("chunks", PERSISTED_CHUNKS);
+    chunkConfig.set("chunks", LOADED_CHUNKS);
 
     try {
       chunkConfig.save(chunkFile);
