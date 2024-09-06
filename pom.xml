@@ -12,8 +12,9 @@
     <name>VanillaUtility</name>
 
     <properties>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <clean.java.version>21</clean.java.version>
+        <maven.compiler.source>${clean.java.version}</maven.compiler.source>
+        <maven.compiler.target>${clean.java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -50,7 +51,7 @@
                             <version>1.18.30</version>
                         </path>
                     </annotationProcessorPaths>
-                    <release>${java.version}</release>
+                    <release>${clean.java.version}</release>
                 </configuration>
             </plugin>
             <plugin>
