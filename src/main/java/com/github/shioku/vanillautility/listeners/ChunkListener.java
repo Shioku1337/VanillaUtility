@@ -24,6 +24,8 @@ public class ChunkListener implements Listener {
 
     List<String> chunkXZ = LOADED_CHUNKS.get(world.getUID().toString());
 
+    if (chunkXZ == null) return;
+
     Chunk[] chunks = new Chunk[chunkXZ.size()];
 
     for (int i = 0; i < chunks.length; i++) {
@@ -53,9 +55,13 @@ public class ChunkListener implements Listener {
 
     List<String> chunkXZ = new ArrayList<>();
 
+    if (!world.getPluginChunkTickets().containsKey(plugin)) return;
+
     for (Chunk chunk : world.getPluginChunkTickets().get(plugin)) {
       chunkXZ.add(chunk.getX() + "," + chunk.getZ());
     }
+
+    LOADED_CHUNKS.computeIfAbsent(world.getName(), k -> new ArrayList<>());
 
     LOADED_CHUNKS.put(world.getUID().toString(), chunkXZ);
   }

@@ -15,3 +15,8 @@ commands:
     description: "List specific advancements to show the progress you've made and what is missing."
     permission: "vu.advancementlist"
     usage: "/<label> (advancement_key)"
+  savechunks:
+    aliases: [sc]
+    description: "Save currently chunk-loaded chunks to the persistend YAML file."
+    permission: "vu.savechunks"
+    usage: "/<label>"

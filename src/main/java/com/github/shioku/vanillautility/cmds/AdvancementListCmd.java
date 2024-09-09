@@ -64,7 +64,7 @@ public class AdvancementListCmd implements TabExecutor {
     TranslatableComponent advancementTitle = ComponentUtil.advancementTitle(advancement);
     List<String> remainingCriteria = new ArrayList<>(player.getAdvancementProgress(advancement).getRemainingCriteria());
 
-    if (remainingCriteria.isEmpty()) {
+    if (player.getAdvancementProgress(advancement).isDone() || remainingCriteria.isEmpty()) {
       player.sendMessage(PREFIX + formatColors("&aContratulations! &7You have already finished this advancement!"));
       return true;
     }
@@ -80,7 +80,7 @@ public class AdvancementListCmd implements TabExecutor {
           .create()
       );
     for (String criteria : remainingCriteria) {
-      player.sendMessage(PREFIX + formatColors("Criteria: &6") + criteria);
+      player.sendMessage(PREFIX + formatColors("Criteria: &6") + criteria.replace("minecraft:", ""));
     }
 
     return true;

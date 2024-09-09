@@ -2,21 +2,29 @@ package com.github.shioku.vanillautility;
 
 import com.github.shioku.vanillautility.cmds.AdvancementListCmd;
 import com.github.shioku.vanillautility.cmds.ChunkLoaderCmd;
+import com.github.shioku.vanillautility.cmds.SaveChunksCmd;
 import com.github.shioku.vanillautility.listeners.ChunkListener;
 import com.github.shioku.vanillautility.listeners.ScoreboardListener;
 import com.github.shioku.vanillautility.updatechecker.UpdateChecker;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
+import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -38,6 +46,8 @@ public final class VanillaUtility extends JavaPlugin {
   private boolean enableHealth = false;
 
   private Scoreboard scoreboard = null;
+
+  private BukkitAudiences adventure;
 
   private File chunkFile;
 
@@ -85,18 +95,29 @@ public final class VanillaUtility extends JavaPlugin {
       return;
     }
 
-    setupChunkFile();
+    this.enableHealth = getConfig().getBoolean("enableHealth", true);
 
     setUsages();
 
-    this.enableHealth = getConfig().getBoolean("enableHealth", true);
+    setupChunkFile();
 
     loadPersistedChunksToMemory();
+
+    this.adventure = BukkitAudiences.create(this);
 
     registerCommands();
 
     registerScoreboards();
     registerListeners();
+
+    Bukkit.getOnlinePlayers()
+      .forEach(onlinePlayer -> {
+        Audience player = this.adventure.player(onlinePlayer);
+        var mm = MiniMessage.miniMessage();
+        Component parsed = mm.deserialize("<#A00EFF><hover:show_text:'someText'>Test</hover></#A00EFF>");
+
+        player.sendMessage(parsed);
+      });
 
     getLogger().info(this.getDescription().getName() + " has been enabled with v" + this.getDescription().getVersion() + ".");
   }
@@ -104,6 +125,19 @@ public final class VanillaUtility extends JavaPlugin {
   @Override
   public void onDisable() {
     persistChunksToYAML();
+
+    if (this.adventure == null) return;
+
+    this.adventure.close();
+    this.adventure = null;
+  }
+
+  public BukkitAudiences adventure() {
+    if (this.adventure == null) {
+      throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
+    }
+
+    return this.adventure;
   }
 
   private void registerScoreboardPlaytime() {
@@ -186,6 +220,8 @@ public final class VanillaUtility extends JavaPlugin {
     getCommand("advancementlist").setExecutor(new AdvancementListCmd(this.getLogger()));
     getCommand("chunkloader").setTabCompleter(new ChunkLoaderCmd(this));
     getCommand("advancementlist").setTabCompleter(new AdvancementListCmd(this.getLogger()));
+    getCommand("savechunks").setExecutor(new SaveChunksCmd(this));
+    getCommand("savechunks").setTabCompleter(new SaveChunksCmd(this));
     getLogger().info("Registered Commands.");
   }
 
@@ -205,6 +241,8 @@ public final class VanillaUtility extends JavaPlugin {
   }
 
   private void loadPersistedChunksToMemory() {
+    chunkConfig = YamlConfiguration.loadConfiguration(chunkFile);
+
     ConfigurationSection worldSection = chunkConfig.getConfigurationSection("chunks");
 
     if (worldSection == null) return;
@@ -216,10 +254,43 @@ public final class VanillaUtility extends JavaPlugin {
       LOADED_CHUNKS.put(worldId, chunkList);
     }
 
+    Bukkit.getWorlds()
+      .forEach(world -> {
+        for (Map.Entry<String, List<String>> entry : LOADED_CHUNKS.entrySet()) {
+          String worldId = entry.getKey();
+          List<String> chunkList = entry.getValue();
+
+          if (!worldId.equals(world.getUID().toString())) continue;
+
+          for (String chunkXZ : chunkList) {
+            String[] xz = chunkXZ.split(",");
+
+            int x = Integer.parseInt(xz[0]);
+            int z = Integer.parseInt(xz[1]);
+
+            world.addPluginChunkTicket(x, z, this);
+          }
+        }
+      });
+
     getLogger().info("Loaded persisted chunks to memory.");
   }
 
-  private void persistChunksToYAML() {
+  public void persistChunksToYAML() {
+    for (World world : Bukkit.getWorlds()) {
+      List<String> chunkXZ = new ArrayList<>();
+
+      if (world.getPluginChunkTickets().containsKey(this)) continue;
+
+      for (Chunk chunk : world.getPluginChunkTickets().get(this)) {
+        chunkXZ.add(chunk.getX() + "," + chunk.getZ());
+      }
+
+      LOADED_CHUNKS.computeIfAbsent(world.getName(), k -> new ArrayList<>());
+
+      LOADED_CHUNKS.put(world.getUID().toString(), chunkXZ);
+    }
+
     chunkConfig.set("chunks", LOADED_CHUNKS);
 
     try {

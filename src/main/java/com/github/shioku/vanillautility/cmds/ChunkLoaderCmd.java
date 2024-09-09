@@ -108,7 +108,11 @@ public class ChunkLoaderCmd implements TabExecutor {
         player.sendMessage(
           PREFIX +
           formatColors(
-            "The chunk at &6(" + x + ", " + z + ") &7is &calready chunk-loaded&7. You can &cremove &7it using &c/chunkloader remove (x,z)"
+            "The chunk at &6(" +
+            player.getWorld().getChunkAt(x, z).getX() +
+            ", " +
+            player.getWorld().getChunkAt(x, z).getZ() +
+            ") &7is &calready chunk-loaded&7. You can &cremove &7it using &c/chunkloader remove (x,z)"
           )
         );
         return;
@@ -122,13 +126,29 @@ public class ChunkLoaderCmd implements TabExecutor {
     // Handling for /chunkloader remove (x,z)
     if (!player.getWorld().getChunkAt(x, z).getPluginChunkTickets().contains(this.plugin)) {
       player.sendMessage(
-        PREFIX + formatColors("The chunk at &6(" + x + ", " + z + ") &7is &cnot chunk-loaded&7. You can &aadd &7it using &c/chunkloader add (x,z)")
+        PREFIX +
+        formatColors(
+          "The chunk at &6(" +
+          player.getWorld().getChunkAt(x, z).getX() +
+          ", " +
+          player.getWorld().getChunkAt(x, z).getZ() +
+          ") &7is &cnot chunk-loaded&7. You can &aadd &7it using &c/chunkloader add (x,z)"
+        )
       );
       return;
     }
 
     player.getWorld().removePluginChunkTicket(x, z, this.plugin);
-    player.sendMessage(PREFIX + formatColors("The chunk at &6(" + x + ", " + z + ") &7has been &cchunk-unloaded."));
+    player.sendMessage(
+      PREFIX +
+      formatColors(
+        "The chunk at &6(" +
+        player.getWorld().getChunkAt(x, z).getZ() +
+        ", " +
+        player.getWorld().getChunkAt(x, z).getZ() +
+        ") &7has been &cchunk-unloaded."
+      )
+    );
   }
 
   @Override
