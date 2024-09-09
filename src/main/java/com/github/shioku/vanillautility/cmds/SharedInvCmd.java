@@ -1,34 +1,34 @@
 package com.github.shioku.vanillautility.cmds;
 
-import static com.github.shioku.vanillautility.VanillaUtility.PREFIX;
-
 import com.github.shioku.vanillautility.VanillaUtility;
 import com.github.shioku.vanillautility.misc.StringUtil;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @RequiredArgsConstructor
-public class SaveChunksCmd implements TabExecutor {
+public class SharedInvCmd implements TabExecutor {
 
   private final VanillaUtility plugin;
 
   @Override
   public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
+    if (!(sender instanceof Player player)) {
+      this.plugin.getLogger().info("The shared inventory can only be opened by players!");
+      return true;
+    }
+
     if (args.length != 0) {
       sender.sendMessage(StringUtil.getSyntaxError(cmd));
       return true;
     }
-    Audience audience = plugin.adventure().sender(sender);
 
-    plugin.persistChunksToYAML();
-    audience.sendMessage(MiniMessage.miniMessage().deserialize(PREFIX + "Successfully saved chunk-loaded chunks to yaml."));
+    player.openInventory(this.plugin.getInventoryUtil().getInventory());
     return true;
   }
 

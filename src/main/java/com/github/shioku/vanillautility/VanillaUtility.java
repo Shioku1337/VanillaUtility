@@ -1,10 +1,16 @@
 package com.github.shioku.vanillautility;
 
+import static com.github.shioku.vanillautility.misc.StringUtil.VALID_COLORS;
+
 import com.github.shioku.vanillautility.cmds.AdvancementListCmd;
 import com.github.shioku.vanillautility.cmds.ChunkLoaderCmd;
 import com.github.shioku.vanillautility.cmds.SaveChunksCmd;
+import com.github.shioku.vanillautility.cmds.SharedInvCmd;
 import com.github.shioku.vanillautility.listeners.ChunkListener;
+import com.github.shioku.vanillautility.listeners.InventoryListener;
 import com.github.shioku.vanillautility.listeners.ScoreboardListener;
+import com.github.shioku.vanillautility.misc.inventory.SharedInventoryUtil;
+import com.github.shioku.vanillautility.misc.inventory.serializer.InventorySerializer;
 import com.github.shioku.vanillautility.updatechecker.UpdateChecker;
 import java.io.File;
 import java.io.IOException;
@@ -15,10 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -36,44 +39,34 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 
-@Getter
 public final class VanillaUtility extends JavaPlugin {
 
   private boolean enablePlugin = true;
 
-  public static String PREFIX = formatColors("&8[&3Admin&8] &7");
+  // Use with adventure!
+  public static String PREFIX = "<color:#666666>[<aqua>Admin<color:#666666>] <gray>";
 
+  @Getter
   private boolean enableHealth = false;
 
+  @Getter
   private Scoreboard scoreboard = null;
 
   private BukkitAudiences adventure;
 
+  @Getter
   private File chunkFile;
 
   @Setter
+  @Getter
   private YamlConfiguration chunkConfig;
 
-  public static final Set<String> VALID_COLORS = Set.of(
-    "BLACK",
-    "DARK_BLUE",
-    "DARK_GREEN",
-    "DARK_AQUA",
-    "DARK_RED",
-    "DARK_PURPLE",
-    "GOLD",
-    "GRAY",
-    "DARK_GRAY",
-    "BLUE",
-    "GREEN",
-    "AQUA",
-    "RED",
-    "LIGHT_PURPLE",
-    "YELLOW",
-    "WHITE"
-  );
-
   public static Map<String, List<String>> LOADED_CHUNKS = new HashMap<>();
+
+  @Getter
+  private SharedInventoryUtil inventoryUtil;
+
+  private InventorySerializer inventorySerializer;
 
   @Override
   public void onLoad() {
@@ -97,6 +90,11 @@ public final class VanillaUtility extends JavaPlugin {
 
     this.enableHealth = getConfig().getBoolean("enableHealth", true);
 
+    this.inventoryUtil = new SharedInventoryUtil();
+    this.inventorySerializer = new InventorySerializer(this);
+
+    loadSharedInventory();
+
     setUsages();
 
     setupChunkFile();
@@ -110,14 +108,7 @@ public final class VanillaUtility extends JavaPlugin {
     registerScoreboards();
     registerListeners();
 
-    Bukkit.getOnlinePlayers()
-      .forEach(onlinePlayer -> {
-        Audience player = this.adventure.player(onlinePlayer);
-        var mm = MiniMessage.miniMessage();
-        Component parsed = mm.deserialize("<#A00EFF><hover:show_text:'someText'>Test</hover></#A00EFF>");
-
-        player.sendMessage(parsed);
-      });
+    Bukkit.getConsoleSender().sendMessage(formatColors("&8[&3Admin&8] &7"));
 
     getLogger().info(this.getDescription().getName() + " has been enabled with v" + this.getDescription().getVersion() + ".");
   }
@@ -125,6 +116,8 @@ public final class VanillaUtility extends JavaPlugin {
   @Override
   public void onDisable() {
     persistChunksToYAML();
+
+    saveSharedInventory();
 
     if (this.adventure == null) return;
 
@@ -215,13 +208,14 @@ public final class VanillaUtility extends JavaPlugin {
 
   @SuppressWarnings("ConstantConditions")
   private void registerCommands() {
-    // Register commands
     getCommand("chunkloader").setExecutor(new ChunkLoaderCmd(this));
     getCommand("advancementlist").setExecutor(new AdvancementListCmd(this.getLogger()));
     getCommand("chunkloader").setTabCompleter(new ChunkLoaderCmd(this));
     getCommand("advancementlist").setTabCompleter(new AdvancementListCmd(this.getLogger()));
     getCommand("savechunks").setExecutor(new SaveChunksCmd(this));
     getCommand("savechunks").setTabCompleter(new SaveChunksCmd(this));
+    getCommand("sharedinv").setExecutor(new SharedInvCmd(this));
+    getCommand("sharedinv").setTabCompleter(new SharedInvCmd(this));
     getLogger().info("Registered Commands.");
   }
 
@@ -238,6 +232,7 @@ public final class VanillaUtility extends JavaPlugin {
   private void registerListeners() {
     Bukkit.getPluginManager().registerEvents(new ScoreboardListener(this), this);
     Bukkit.getPluginManager().registerEvents(new ChunkListener(this), this);
+    Bukkit.getPluginManager().registerEvents(new InventoryListener(this), this);
   }
 
   private void loadPersistedChunksToMemory() {
@@ -280,7 +275,7 @@ public final class VanillaUtility extends JavaPlugin {
     for (World world : Bukkit.getWorlds()) {
       List<String> chunkXZ = new ArrayList<>();
 
-      if (world.getPluginChunkTickets().containsKey(this)) continue;
+      if (!world.getPluginChunkTickets().containsKey(this)) continue;
 
       for (Chunk chunk : world.getPluginChunkTickets().get(this)) {
         chunkXZ.add(chunk.getX() + "," + chunk.getZ());
@@ -298,6 +293,26 @@ public final class VanillaUtility extends JavaPlugin {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private void saveSharedInventory() {
+    File file = new File(this.getDataFolder(), "data/shared_inventory.json");
+
+    if (!file.exists()) {
+      saveResource("data/shared_inventory.json", false);
+    }
+
+    this.inventorySerializer.serialize(file, this.inventoryUtil.getInventory());
+  }
+
+  private void loadSharedInventory() {
+    File file = new File(this.getDataFolder(), "data/shared_inventory.json");
+
+    if (!file.exists()) {
+      saveResource("data/shared_inventory.json", false);
+    }
+
+    this.inventoryUtil.getInventory().setContents(this.inventorySerializer.deserialize(file));
   }
 
   public static String formatColors(String arg) {

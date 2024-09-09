@@ -4,6 +4,20 @@ main: com.github.shioku.vanillautility.VanillaUtility
 api-version: '1.21'
 website: 'https://github.com/Shioku1337/VanillaUtility/releases'
 
+permissions:
+  vu.chunkloader:
+    description: "Allows players to permanently load chunks."
+    default: op
+  vu.advancementlist:
+    description: "Allows players to view your remaining advancement progress."
+    default: true
+  vu.savechunks:
+    description: "Allows players to manually save the chunks to the YAML-file."
+    default: op
+  vu.sharedinv:
+    description: "Allows players to access a sharedinv to share books between players."
+    default: true
+
 commands:
   chunkloader:
     aliases: [cl]
@@ -19,4 +33,9 @@ commands:
     aliases: [sc]
     description: "Save currently chunk-loaded chunks to the persistend YAML file."
     permission: "vu.savechunks"
+    usage: "/<label>"
+  sharedinv:
+    aliases: [si]
+    description: "Opens a shared inventory accessible to all players. Only allows Book & Quill to be placed inside."
+    permission: "vu.sharedinv"
     usage: "/<label>"

@@ -1,9 +1,9 @@
 package com.github.shioku.vanillautility.misc;
 
-import java.awt.*;
 import java.util.Arrays;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TranslatableComponent;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TranslatableComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
@@ -18,23 +18,23 @@ public class ComponentUtil {
   }
 
   public static TranslatableComponent itemName(Material item) {
-    return new TranslatableComponent(itemKey(item));
+    return Component.translatable(itemKey(item));
   }
 
   public static TranslatableComponent advancementTitle(@NotNull Advancement advancement) {
-    return new TranslatableComponent(advancementKey(advancement) + ".title");
+    return Component.translatable(advancementKey(advancement) + ".title");
   }
 
   public static TranslatableComponent advancementDescription(@NotNull Advancement advancement) {
-    return new TranslatableComponent(advancementKey(advancement) + ".description");
+    return Component.translatable(advancementKey(advancement) + ".description");
   }
 
-  public static TranslatableComponent statistic(Statistic statistic, Component... with) {
-    return new TranslatableComponent(statisticKey(statistic), (Object[]) with);
+  public static TranslatableComponent statistic(Statistic statistic) {
+    return Component.translatable(statisticKey(statistic));
   }
 
   public static TranslatableComponent entityName(EntityType entity) {
-    return new TranslatableComponent(entityKey(entity));
+    return Component.translatable(entityKey(entity));
   }
 
   // Internals
