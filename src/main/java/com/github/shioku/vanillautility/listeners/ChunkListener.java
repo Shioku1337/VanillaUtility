@@ -3,7 +3,6 @@ package com.github.shioku.vanillautility.listeners;
 import static com.github.shioku.vanillautility.VanillaUtility.LOADED_CHUNKS;
 
 import com.github.shioku.vanillautility.VanillaUtility;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Chunk;
@@ -11,7 +10,6 @@ import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldLoadEvent;
-import org.bukkit.event.world.WorldUnloadEvent;
 
 @RequiredArgsConstructor
 public class ChunkListener implements Listener {
@@ -47,22 +45,5 @@ public class ChunkListener implements Listener {
         chunk.addPluginChunkTicket(plugin);
       }
     }
-  }
-
-  @EventHandler
-  public void onWorldUnload(WorldUnloadEvent event) {
-    World world = event.getWorld();
-
-    List<String> chunkXZ = new ArrayList<>();
-
-    if (!world.getPluginChunkTickets().containsKey(plugin)) return;
-
-    for (Chunk chunk : world.getPluginChunkTickets().get(plugin)) {
-      chunkXZ.add(chunk.getX() + "," + chunk.getZ());
-    }
-
-    LOADED_CHUNKS.computeIfAbsent(world.getName(), k -> new ArrayList<>());
-
-    LOADED_CHUNKS.put(world.getUID().toString(), chunkXZ);
   }
 }
