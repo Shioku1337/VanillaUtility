@@ -4,6 +4,7 @@ import com.github.shioku.vanillautility.VanillaUtility;
 import com.github.shioku.vanillautility.misc.StringUtil;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -23,8 +24,10 @@ public class SharedInvCmd implements TabExecutor {
       return true;
     }
 
+    Audience audience = plugin.adventure().player(player);
+
     if (args.length != 0) {
-      sender.sendMessage(StringUtil.getSyntaxError(cmd));
+      audience.sendMessage(StringUtil.getSyntax(cmd));
       return true;
     }
 

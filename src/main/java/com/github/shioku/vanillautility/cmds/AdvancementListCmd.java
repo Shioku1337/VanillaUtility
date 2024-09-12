@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.md_5.bungee.api.ChatColor;
@@ -19,6 +20,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
+import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -26,20 +28,17 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@RequiredArgsConstructor
 public class AdvancementListCmd implements TabExecutor {
 
   private final VanillaUtility plugin;
 
-  private final BaseComponent[] infoComponent = new ComponentBuilder(PREFIX + "You can find the needed ids on the ")
-    .append("Minecraft Advancement List")
-    .color(ChatColor.DARK_AQUA)
-    .underlined(true)
-    .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://minecraft.fandom.com/wiki/Advancement#List_of_advancements"))
-    .append("! The column \"Resource Location\" is the correct input!")
-    .color(ChatColor.GRAY)
-    .underlined(false)
-    .create();
+  public AdvancementListCmd(VanillaUtility plugin) {
+    this.plugin = plugin;
+  }
+
+  private final Component infoComponent = MiniMessage.miniMessage().deserialize(PREFIX + "You can find the needed ids on the " +
+      "<u><aqua><click:open_url:https://minecraft.fandom.com/wiki/Advancement#List_of_advancements>Minecraft Advancement List</click></aqua></u>! " +
+      "The column \"Resource Location\" is the correct input!");
 
   @Override
   public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
@@ -48,28 +47,28 @@ public class AdvancementListCmd implements TabExecutor {
       return true;
     }
 
-    if (args.length != 1) {
-      player.sendMessage(StringUtil.getSyntaxError(cmd));
-      player.spigot().sendMessage(this.infoComponent);
-      return true;
-    }
-
     Audience audience = plugin.adventure().player(player);
     MiniMessage miniMessage = MiniMessage.miniMessage();
+
+    if (args.length != 1) {
+      audience.sendMessage(StringUtil.getSyntax(cmd));
+      audience.sendMessage(this.infoComponent);
+      return true;
+    }
 
     Advancement advancement = Bukkit.getAdvancement(NamespacedKey.minecraft(args[0]));
 
     if (advancement == null) {
-      // todo / leftoff
-      player.sendMessage(PREFIX + "Syntaxerror, wrong advancement key! Please use: &c" + cmd.getUsage());
-      player.spigot().sendMessage(this.infoComponent);
+      audience.sendMessage(miniMessage.deserialize(PREFIX + "Syntaxerror, wrong advancement key! Please use: <red>" + cmd.getUsage()));
+      audience.sendMessage(this.infoComponent);
       return true;
     }
 
     TranslatableComponent advancementTitle = ComponentUtil.advancementTitle(advancement);
-    List<String> remainingCriteria = new ArrayList<>(player.getAdvancementProgress(advancement).getRemainingCriteria());
+    AdvancementProgress advancementProgress = player.getAdvancementProgress(advancement);
+    List<String> remainingCriteria = new ArrayList<>(advancementProgress.getRemainingCriteria());
 
-    if (player.getAdvancementProgress(advancement).isDone() || remainingCriteria.isEmpty()) {
+    if (advancementProgress.isDone() || remainingCriteria.isEmpty()) {
       audience.sendMessage(miniMessage.deserialize(PREFIX + "<green>Congratilations! <gray>You have already finished this advancement!"));
       return true;
     }
@@ -78,7 +77,7 @@ public class AdvancementListCmd implements TabExecutor {
       miniMessage
         .deserialize(PREFIX + "The following progess is still missing from the advancement: \"<green>")
         .append(advancementTitle)
-        .append(miniMessage.deserialize("</green>\""))
+        .append(miniMessage.deserialize("<gray>\""))
     );
 
     for (String criteria : remainingCriteria) {

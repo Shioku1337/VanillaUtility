@@ -17,6 +17,9 @@ permissions:
   vu.sharedinv:
     description: "Allows players to access a sharedinv to share books between players."
     default: true
+  vu.ping:
+    description: "Allows players to display their ping to the server."
+    default: true
 
 commands:
   chunkloader:
@@ -38,4 +41,9 @@ commands:
     aliases: [si]
     description: "Opens a shared inventory accessible to all players. Only allows Book & Quill to be placed inside."
     permission: "vu.sharedinv"
+    usage: "/<label>"
+  ping:
+    aliases: []
+    description: "Displays your ping."
+    permission: "vu.ping"
     usage: "/<label>"

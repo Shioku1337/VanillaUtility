@@ -2,10 +2,7 @@ package com.github.shioku.vanillautility;
 
 import static com.github.shioku.vanillautility.misc.StringUtil.VALID_COLORS;
 
-import com.github.shioku.vanillautility.cmds.AdvancementListCmd;
-import com.github.shioku.vanillautility.cmds.ChunkLoaderCmd;
-import com.github.shioku.vanillautility.cmds.SaveChunksCmd;
-import com.github.shioku.vanillautility.cmds.SharedInvCmd;
+import com.github.shioku.vanillautility.cmds.*;
 import com.github.shioku.vanillautility.listeners.ChunkListener;
 import com.github.shioku.vanillautility.listeners.InventoryListener;
 import com.github.shioku.vanillautility.listeners.ScoreboardListener;
@@ -14,30 +11,17 @@ import com.github.shioku.vanillautility.misc.inventory.serializer.InventorySeria
 import com.github.shioku.vanillautility.updatechecker.UpdateChecker;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Statistic;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.Criteria;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.*;
 
 public final class VanillaUtility extends JavaPlugin {
 
@@ -107,8 +91,6 @@ public final class VanillaUtility extends JavaPlugin {
 
     registerScoreboards();
     registerListeners();
-
-    Bukkit.getConsoleSender().sendMessage(formatColors("&8[&3Admin&8] &7"));
 
     getLogger().info(this.getDescription().getName() + " has been enabled with v" + this.getDescription().getVersion() + ".");
   }
@@ -209,13 +191,15 @@ public final class VanillaUtility extends JavaPlugin {
   @SuppressWarnings("ConstantConditions")
   private void registerCommands() {
     getCommand("chunkloader").setExecutor(new ChunkLoaderCmd(this));
-    getCommand("advancementlist").setExecutor(new AdvancementListCmd(this.getLogger()));
+    getCommand("advancementlist").setExecutor(new AdvancementListCmd(this));
     getCommand("chunkloader").setTabCompleter(new ChunkLoaderCmd(this));
-    getCommand("advancementlist").setTabCompleter(new AdvancementListCmd(this.getLogger()));
+    getCommand("advancementlist").setTabCompleter(new AdvancementListCmd(this));
     getCommand("savechunks").setExecutor(new SaveChunksCmd(this));
     getCommand("savechunks").setTabCompleter(new SaveChunksCmd(this));
     getCommand("sharedinv").setExecutor(new SharedInvCmd(this));
     getCommand("sharedinv").setTabCompleter(new SharedInvCmd(this));
+    getCommand("ping").setExecutor(new PingCmd(this));
+    getCommand("ping").setTabCompleter(new PingCmd(this));
     getLogger().info("Registered Commands.");
   }
 

@@ -1,7 +1,7 @@
 package com.github.shioku.vanillautility.cmds;
 
 import static com.github.shioku.vanillautility.VanillaUtility.PREFIX;
-import static com.github.shioku.vanillautility.VanillaUtility.formatColors;
+import static com.github.shioku.vanillautility.misc.StringUtil.mm;
 
 import com.github.shioku.vanillautility.VanillaUtility;
 import com.github.shioku.vanillautility.misc.StringUtil;
@@ -27,26 +27,27 @@ public class ChunkLoaderCmd implements TabExecutor {
   @Override
   public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
     if (!(sender instanceof Player player)) {
-      Audience messagePlayer = plugin.adventure().sender(Bukkit.getConsoleSender());
+      Audience audience1 = plugin.adventure().sender(Bukkit.getConsoleSender());
 
-      messagePlayer.sendMessage(
+      audience1.sendMessage(
         MiniMessage.miniMessage()
           .deserialize(
-            PREFIX + "You may not put any other items than <red>Book & Quill</red> or <red>Signed Book</red> into the shared inventory!"
+            PREFIX + "Your chunk is <red>already chunk-loaded<gray>. You can <red>remove <gray>it using <red>/chunkloaded remove<gray>."
           )
       );
-
       this.plugin.getLogger().info("Chunks can only be chunk-loaded by players!");
       return true;
     }
 
+    Audience audience = plugin.adventure().player(player);
+
     if (args.length < 1 || args.length > 3) {
-      player.sendMessage(StringUtil.getSyntaxError(cmd));
+      audience.sendMessage(StringUtil.getSyntax(cmd));
       return true;
     }
 
     if (!args[0].equalsIgnoreCase("add") && !args[0].equalsIgnoreCase("remove")) {
-      player.sendMessage(StringUtil.getSyntaxError(cmd));
+      audience.sendMessage(StringUtil.getSyntax(cmd));
       return true;
     }
 
@@ -54,50 +55,54 @@ public class ChunkLoaderCmd implements TabExecutor {
     if (args[0].equalsIgnoreCase("add")) {
       if (args.length == 1) {
         if (!player.getWorld().getChunkAt(player.getLocation()).addPluginChunkTicket(this.plugin)) {
-          player.sendMessage(PREFIX + formatColors("Your chunk is &calready chunk-loaded&7. You can &cremove &7it using &c/chunkloader remove"));
+          audience.sendMessage(
+            mm(PREFIX + "Your chunk is <red>already chunk-loaded<gray>. You can <red>remove <gray>it using <red>/chunkloaded remove<gray>.")
+          );
           return true;
         }
 
-        player.sendMessage(PREFIX + formatColors("Your current chunk has been &achunk-loaded&7."));
+        audience.sendMessage(mm(PREFIX + "Your current chunk has been <green>chunk-loaded<gray>."));
         return true;
       }
 
-      handleXZChunkLoading(cmd, args, player);
+      handleXZChunkLoading(cmd, args, player, audience);
       return true;
     }
 
     // Handling for /chunkloader remove
     if (args.length == 1) {
       if (!player.getWorld().getChunkAt(player.getLocation()).removePluginChunkTicket(this.plugin)) {
-        player.sendMessage(PREFIX + formatColors("Your chunk is &cnot chunk-loaded&7. You can &aadd &7it using &c/chunkloader add"));
+        audience.sendMessage(
+          mm(PREFIX + "Your chunk is <red>not chunk-loaded<gray>. You can <green>add <gray>it using <red>/chunkloader add<gray>.s")
+        );
         return true;
       }
 
-      player.sendMessage(PREFIX + formatColors("Your current chunk has been &cchunk-unloaded&7."));
+      audience.sendMessage(mm(PREFIX + "Your current chunk has been <red>chunk-unloaded<green>."));
       return true;
     }
 
     // Handling for /chunkloader add,remove all,(x,z)
-    handleXZChunkLoading(cmd, args, player);
+    handleXZChunkLoading(cmd, args, player, audience);
     return true;
   }
 
-  private void handleXZChunkLoading(@NotNull Command cmd, @NotNull String[] args, Player player) {
+  private void handleXZChunkLoading(@NotNull Command cmd, @NotNull String[] args, Player player, Audience audience) {
     // Handling for /chunkloader remove all
     if (args.length == 2) {
       if (args[0].equalsIgnoreCase("add")) {
-        player.sendMessage(StringUtil.getSyntaxError(cmd));
-        player.sendMessage(PREFIX + formatColors("Using \"&call\" &7is only possible when &cchunk-unloading &7chunks."));
+        audience.sendMessage(StringUtil.getSyntax(cmd));
+        audience.sendMessage(mm(PREFIX + "Using \"<red>all<gray>\" is only possible when <red>chunk-unloading <gray>chunks."));
         return;
       }
 
       if (!args[1].equalsIgnoreCase("all")) {
-        player.sendMessage(StringUtil.getSyntaxError(cmd));
+        audience.sendMessage(StringUtil.getSyntax(cmd));
         return;
       }
 
       player.getWorld().removePluginChunkTickets(this.plugin);
-      player.sendMessage(PREFIX + formatColors("All chunks in your current world have been &cchunk-unloaded&7."));
+      audience.sendMessage(mm(PREFIX + "All chunks in your current world have been <red>chunk-unloaded<gray>."));
       return;
     }
 
@@ -109,7 +114,7 @@ public class ChunkLoaderCmd implements TabExecutor {
       x = Integer.parseInt(args[1]);
       z = Integer.parseInt(args[2]);
     } catch (NumberFormatException ex) {
-      player.sendMessage(StringUtil.getSyntaxError(cmd));
+      audience.sendMessage(StringUtil.getSyntax(cmd));
       return;
     }
 
@@ -118,42 +123,42 @@ public class ChunkLoaderCmd implements TabExecutor {
     // Handling for /chunkloader add (x,z)
     if (args[0].equalsIgnoreCase("add")) {
       if (!player.getWorld().addPluginChunkTicket(x, z, this.plugin)) {
-        player.sendMessage(
-          PREFIX +
-          formatColors(
-            "The chunk at &6(" +
+        audience.sendMessage(
+          mm(
+            PREFIX +
+            "The chunk at <gold>(" +
             chosenChunk.getX() +
             ", " +
             chosenChunk.getZ() +
-            ") &7is &calready chunk-loaded&7. You can &cremove &7it using &c/chunkloader remove (x,z)"
+            ") <gray>is <red>already chunk-loaded<gray>. You can <red>remove <gray>it using <red>/chunkloader remove (x,z)"
           )
         );
         return;
       }
 
-      player.sendMessage(
-        PREFIX + formatColors("The chunk at &6(" + chosenChunk.getX() + ", " + chosenChunk.getZ() + ") &7has been &achunk-loaded.")
+      audience.sendMessage(
+        mm(PREFIX + "The chunk at <gold>(" + chosenChunk.getX() + ", " + chosenChunk.getZ() + ") <gray>has been <green>chunk-loaded.")
       );
       return;
     }
 
     // Handling for /chunkloader remove (x,z)
     if (!player.getWorld().removePluginChunkTicket(x, z, this.plugin)) {
-      player.sendMessage(
-        PREFIX +
-        formatColors(
-          "The chunk at &6(" +
+      audience.sendMessage(
+        mm(
+          PREFIX +
+          "The chunk at <gold>(" +
           chosenChunk.getX() +
           ", " +
           chosenChunk.getZ() +
-          ") &7is &cnot chunk-loaded&7. You can &aadd &7it using &c/chunkloader add (x,z)"
+          ") <gray>is <red>not chunk-loaded<gray>. You can <green>add <gray>it using <red>/chunkloader add (x,z)<gray>."
         )
       );
       return;
     }
 
-    player.sendMessage(
-      PREFIX + formatColors("The chunk at &6(" + chosenChunk.getX() + ", " + chosenChunk.getZ() + ") &7has been &cchunk-unloaded.")
+    audience.sendMessage(
+      mm(PREFIX + "The chunk at <gold>(" + chosenChunk.getX() + ", " + chosenChunk.getZ() + ") <gray>has been <red>chunk-unloaded<gray>.")
     );
   }
 

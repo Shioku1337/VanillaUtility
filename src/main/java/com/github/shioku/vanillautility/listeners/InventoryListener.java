@@ -31,9 +31,9 @@ public class InventoryListener implements Listener {
     event.setCancelled(true);
     Bukkit.getScheduler().runTask(plugin, humanEntity::closeInventory);
 
-    Audience messagePlayer = plugin.adventure().sender(event.getWhoClicked());
+    Audience audience = plugin.adventure().sender(event.getWhoClicked());
 
-    messagePlayer.sendMessage(
+    audience.sendMessage(
       MiniMessage.miniMessage()
         .deserialize(PREFIX + "You may not put any other items than <red>Book & Quill</red> or <red>Signed Book</red> into the shared inventory!")
     );
