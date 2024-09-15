@@ -111,8 +111,8 @@ public class ChunkLoaderCmd implements TabExecutor {
 
     // set X,Z
     try {
-      x = Integer.parseInt(args[1]);
-      z = Integer.parseInt(args[2]);
+      x = Integer.parseInt(args[1]) >> 4; // convert to chunk coordinates
+      z = Integer.parseInt(args[2]) >> 4; // convert to chunk coordinates
     } catch (NumberFormatException ex) {
       audience.sendMessage(StringUtil.getSyntax(cmd));
       return;
@@ -126,7 +126,7 @@ public class ChunkLoaderCmd implements TabExecutor {
         audience.sendMessage(
           mm(
             PREFIX +
-            "The chunk at <gold>(" +
+            "The chunk at <gold>(Chunk: " +
             chosenChunk.getX() +
             ", " +
             chosenChunk.getZ() +
@@ -137,7 +137,7 @@ public class ChunkLoaderCmd implements TabExecutor {
       }
 
       audience.sendMessage(
-        mm(PREFIX + "The chunk at <gold>(" + chosenChunk.getX() + ", " + chosenChunk.getZ() + ") <gray>has been <green>chunk-loaded.")
+        mm(PREFIX + "The chunk at <gold>(Chunk: " + chosenChunk.getX() + ", " + chosenChunk.getZ() + ") <gray>has been <green>chunk-loaded.")
       );
       return;
     }
@@ -147,7 +147,7 @@ public class ChunkLoaderCmd implements TabExecutor {
       audience.sendMessage(
         mm(
           PREFIX +
-          "The chunk at <gold>(" +
+          "The chunk at <gold>(Chunk: " +
           chosenChunk.getX() +
           ", " +
           chosenChunk.getZ() +
@@ -158,7 +158,7 @@ public class ChunkLoaderCmd implements TabExecutor {
     }
 
     audience.sendMessage(
-      mm(PREFIX + "The chunk at <gold>(" + chosenChunk.getX() + ", " + chosenChunk.getZ() + ") <gray>has been <red>chunk-unloaded<gray>.")
+      mm(PREFIX + "The chunk at <gold>(Chunk: " + chosenChunk.getX() + ", " + chosenChunk.getZ() + ") <gray>has been <red>chunk-unloaded<gray>.")
     );
   }
 

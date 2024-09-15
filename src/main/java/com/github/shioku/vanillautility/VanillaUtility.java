@@ -257,6 +257,20 @@ public final class VanillaUtility extends JavaPlugin {
   }
 
   public void persistChunksToYAML() {
+    for (World world : Bukkit.getWorlds()) {
+      List<String> chunkXZ = new ArrayList<>();
+
+      if (!world.getPluginChunkTickets().containsKey(this)) continue;
+
+      for (Chunk chunk : world.getPluginChunkTickets().get(this)) {
+        chunkXZ.add(chunk.getX() + "," + chunk.getZ());
+      }
+
+      LOADED_CHUNKS.computeIfAbsent(world.getName(), k -> new ArrayList<>());
+
+      LOADED_CHUNKS.put(world.getUID().toString(), chunkXZ);
+    }
+
     chunkConfig.set("chunks", LOADED_CHUNKS);
 
     try {
@@ -287,27 +301,7 @@ public final class VanillaUtility extends JavaPlugin {
   }
 
   private void registerSaveChunksTask() {
-    Bukkit.getScheduler()
-      .runTaskTimerAsynchronously(
-        this,
-        task -> {
-          for (World world : Bukkit.getWorlds()) {
-            List<String> chunkXZ = new ArrayList<>();
-
-            if (!world.getPluginChunkTickets().containsKey(this)) continue;
-
-            for (Chunk chunk : world.getPluginChunkTickets().get(this)) {
-              chunkXZ.add(chunk.getX() + "," + chunk.getZ());
-            }
-
-            LOADED_CHUNKS.computeIfAbsent(world.getName(), k -> new ArrayList<>());
-
-            LOADED_CHUNKS.put(world.getUID().toString(), chunkXZ);
-          }
-        },
-        0,
-        10 * 60 * 20
-      );
+    Bukkit.getScheduler().runTaskTimerAsynchronously(this, this::persistChunksToYAML, 0, 5 * 60 * 20);
   }
 
   public static String formatColors(String arg) {
