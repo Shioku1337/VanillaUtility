@@ -32,7 +32,7 @@ public class ChunkLoaderCmd implements TabExecutor {
       audience1.sendMessage(
         MiniMessage.miniMessage()
           .deserialize(
-            PREFIX + "Your chunk is <red>already chunk-loaded<gray>. You can <red>remove <gray>it using <red>/chunkloaded remove<gray>."
+            PREFIX + "Your chunk is <red>already chunk-loaded<gray>. You can <red>remove <gray>it using <red>/" + cmd.getLabel() + " remove<gray>."
           )
       );
       this.plugin.getLogger().info("Chunks can only be chunk-loaded by players!");
@@ -56,7 +56,12 @@ public class ChunkLoaderCmd implements TabExecutor {
       if (args.length == 1) {
         if (!player.getWorld().getChunkAt(player.getLocation()).addPluginChunkTicket(this.plugin)) {
           audience.sendMessage(
-            mm(PREFIX + "Your chunk is <red>already chunk-loaded<gray>. You can <red>remove <gray>it using <red>/chunkloaded remove<gray>.")
+            mm(
+              PREFIX +
+              "Your chunk is <red>already chunk-loaded<gray>. You can <red>remove <gray>it using <red>/" +
+              cmd.getLabel() +
+              " remove<gray>."
+            )
           );
           return true;
         }
@@ -73,7 +78,7 @@ public class ChunkLoaderCmd implements TabExecutor {
     if (args.length == 1) {
       if (!player.getWorld().getChunkAt(player.getLocation()).removePluginChunkTicket(this.plugin)) {
         audience.sendMessage(
-          mm(PREFIX + "Your chunk is <red>not chunk-loaded<gray>. You can <green>add <gray>it using <red>/chunkloader add<gray>.s")
+          mm(PREFIX + "Your chunk is <red>not chunk-loaded<gray>. You can <green>add <gray>it using <red>/" + cmd.getLabel() + " add<gray>.")
         );
         return true;
       }
@@ -130,7 +135,9 @@ public class ChunkLoaderCmd implements TabExecutor {
             chosenChunk.getX() +
             ", " +
             chosenChunk.getZ() +
-            ") <gray>is <red>already chunk-loaded<gray>. You can <red>remove <gray>it using <red>/chunkloader remove (x,z)"
+            ") <gray>is <red>already chunk-loaded<gray>. You can <red>remove <gray>it using <red>/" +
+            cmd.getLabel() +
+            " remove (x,z)"
           )
         );
         return;
@@ -151,7 +158,9 @@ public class ChunkLoaderCmd implements TabExecutor {
           chosenChunk.getX() +
           ", " +
           chosenChunk.getZ() +
-          ") <gray>is <red>not chunk-loaded<gray>. You can <green>add <gray>it using <red>/chunkloader add (x,z)<gray>."
+          ") <gray>is <red>not chunk-loaded<gray>. You can <green>add <gray>it using <red>/" +
+          cmd.getLabel() +
+          " add (x,z)<gray>."
         )
       );
       return;

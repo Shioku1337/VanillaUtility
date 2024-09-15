@@ -8,15 +8,10 @@ import com.github.shioku.vanillautility.misc.StringUtil;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
@@ -36,9 +31,13 @@ public class AdvancementListCmd implements TabExecutor {
     this.plugin = plugin;
   }
 
-  private final Component infoComponent = MiniMessage.miniMessage().deserialize(PREFIX + "You can find the needed ids on the " +
+  private final Component infoComponent = MiniMessage.miniMessage()
+    .deserialize(
+      PREFIX +
+      "You can find the needed ids on the " +
       "<u><aqua><click:open_url:https://minecraft.fandom.com/wiki/Advancement#List_of_advancements>Minecraft Advancement List</click></aqua></u>! " +
-      "The column \"Resource Location\" is the correct input!");
+      "The column \"Resource Location\" is the correct input!"
+    );
 
   @Override
   public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
@@ -69,13 +68,13 @@ public class AdvancementListCmd implements TabExecutor {
     List<String> remainingCriteria = new ArrayList<>(advancementProgress.getRemainingCriteria());
 
     if (advancementProgress.isDone() || remainingCriteria.isEmpty()) {
-      audience.sendMessage(miniMessage.deserialize(PREFIX + "<green>Congratilations! <gray>You have already finished this advancement!"));
+      audience.sendMessage(miniMessage.deserialize(PREFIX + "<green>Congratulations! <gray>You have already finished this advancement!"));
       return true;
     }
 
     audience.sendMessage(
       miniMessage
-        .deserialize(PREFIX + "The following progess is still missing from the advancement: \"<green>")
+        .deserialize(PREFIX + "The following progress is still missing from the advancement: \"<green>")
         .append(advancementTitle)
         .append(miniMessage.deserialize("<gray>\""))
     );
