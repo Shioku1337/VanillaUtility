@@ -6,7 +6,7 @@
 
     <groupId>com.github.shioku</groupId>
     <artifactId>VanillaUtility</artifactId>
-    <version>1.5.0</version>
+    <version>2.0.0</version>
     <packaging>jar</packaging>
 
     <name>VanillaUtility</name>
@@ -63,6 +63,10 @@
                         <relocation>
                             <pattern>net.kyori.adventure</pattern>
                             <shadedPattern>com.github.shioku.vanillautility.misc.external.adventure</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.jeff-media.json-configuration-serialization</pattern>
+                            <shadedPattern>com.github.shioku.vanillautility.misc.external.json-configuration-serialization</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -121,14 +125,17 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-minimessage</artifactId>
-            <scope>compile</scope>
             <version>4.17.0</version>
         </dependency>
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-platform-bukkit</artifactId>
-            <scope>compile</scope>
             <version>4.3.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jeff-media</groupId>
+            <artifactId>json-configuration-serialization</artifactId>
+            <version>1.1.4</version>
         </dependency>
     </dependencies>
 </project>

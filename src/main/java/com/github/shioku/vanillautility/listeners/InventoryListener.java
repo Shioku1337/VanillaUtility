@@ -13,6 +13,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
 
 @RequiredArgsConstructor
 public class InventoryListener implements Listener {
@@ -23,13 +24,18 @@ public class InventoryListener implements Listener {
   public void onClick(InventoryClickEvent event) {
     HumanEntity humanEntity = event.getWhoClicked();
 
+    if (!event.getView().getTitle().equals(SHARED_INVENTORY_TITLE)) return;
+
+    ItemStack currentItem = event.getCurrentItem();
+
+    if (currentItem == null) return;
+
     if (
-      (event.getView().getTitle().equals(SHARED_INVENTORY_TITLE) && humanEntity.getItemOnCursor().getType() == Material.WRITABLE_BOOK) ||
-      humanEntity.getItemOnCursor().getType() == Material.WRITTEN_BOOK
+      currentItem.getType() == Material.WRITABLE_BOOK || currentItem.getType() == Material.WRITTEN_BOOK || currentItem.getType() == Material.AIR
     ) return;
 
     event.setCancelled(true);
-    Bukkit.getScheduler().runTask(plugin, humanEntity::closeInventory);
+    Bukkit.getScheduler().runTaskLater(plugin, humanEntity::closeInventory, 1);
 
     Audience audience = plugin.adventure().sender(event.getWhoClicked());
 

@@ -3,6 +3,7 @@ package com.github.shioku.vanillautility.misc.inventory.serializer;
 import com.github.shioku.vanillautility.VanillaUtility;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jeff_media.jsonconfigurationserialization.JsonConfigurationSerialization;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -19,7 +20,7 @@ public class InventorySerializer {
 
   private final Gson gson = new GsonBuilder()
     .disableHtmlEscaping()
-    .registerTypeHierarchyAdapter(ItemStack.class, new ItemStackSerializer())
+    .registerTypeHierarchyAdapter(ItemStack.class, JsonConfigurationSerialization.TYPE_HIERARCHY_ADAPTER)
     .create();
 
   public void serialize(File json, Inventory inventory) {

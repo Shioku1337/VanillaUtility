@@ -41,9 +41,7 @@ public class ChunkListener implements Listener {
     }
 
     for (Chunk chunk : chunks) {
-      if (!chunk.getPluginChunkTickets().contains(plugin)) {
-        chunk.addPluginChunkTicket(plugin);
-      }
+      chunk.addPluginChunkTicket(plugin);
     }
   }
 }

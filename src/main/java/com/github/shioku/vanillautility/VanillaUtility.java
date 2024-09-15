@@ -2,7 +2,11 @@ package com.github.shioku.vanillautility;
 
 import static com.github.shioku.vanillautility.misc.StringUtil.VALID_COLORS;
 
-import com.github.shioku.vanillautility.cmds.*;
+import com.github.shioku.vanillautility.cmds.AdvancementListCmd;
+import com.github.shioku.vanillautility.cmds.ChunkLoaderCmd;
+import com.github.shioku.vanillautility.cmds.PingCmd;
+import com.github.shioku.vanillautility.cmds.SaveChunksCmd;
+import com.github.shioku.vanillautility.cmds.SharedInvCmd;
 import com.github.shioku.vanillautility.listeners.ChunkListener;
 import com.github.shioku.vanillautility.listeners.InventoryListener;
 import com.github.shioku.vanillautility.listeners.ScoreboardListener;
@@ -11,17 +15,30 @@ import com.github.shioku.vanillautility.misc.inventory.serializer.InventorySeria
 import com.github.shioku.vanillautility.updatechecker.UpdateChecker;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Statistic;
+import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.*;
+import org.bukkit.scoreboard.Criteria;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
 
 public final class VanillaUtility extends JavaPlugin {
 
