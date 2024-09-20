@@ -27,7 +27,7 @@ public class SharedInvCmd implements TabExecutor {
     Audience audience = plugin.adventure().player(player);
 
     if (args.length != 0) {
-      audience.sendMessage(StringUtil.getSyntax(cmd));
+      audience.sendMessage(StringUtil.getSyntaxError(cmd));
       return true;
     }
 

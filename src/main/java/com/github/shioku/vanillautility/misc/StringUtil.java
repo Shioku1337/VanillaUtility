@@ -1,21 +1,15 @@
 package com.github.shioku.vanillautility.misc;
 
 import static com.github.shioku.vanillautility.VanillaUtility.PREFIX;
-import static com.github.shioku.vanillautility.VanillaUtility.formatColors;
 
 import java.util.Set;
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.Command;
 
 public class StringUtil {
 
-  public static String getSyntaxError(Command command) {
-    return PREFIX + formatColors("Syntaxerror! Please use: &c" + command.getUsage());
-  }
-
-  public static Component getSyntax(Command command) {
+  public static Component getSyntaxError(Command command) {
     return MiniMessage.miniMessage().deserialize(PREFIX + "Syntaxerror! Please use: <red>" + command.getUsage() + "</red>");
   }
 

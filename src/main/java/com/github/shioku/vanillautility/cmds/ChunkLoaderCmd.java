@@ -42,12 +42,12 @@ public class ChunkLoaderCmd implements TabExecutor {
     Audience audience = plugin.adventure().player(player);
 
     if (args.length < 1 || args.length > 3) {
-      audience.sendMessage(StringUtil.getSyntax(cmd));
+      audience.sendMessage(StringUtil.getSyntaxError(cmd));
       return true;
     }
 
     if (!args[0].equalsIgnoreCase("add") && !args[0].equalsIgnoreCase("remove")) {
-      audience.sendMessage(StringUtil.getSyntax(cmd));
+      audience.sendMessage(StringUtil.getSyntaxError(cmd));
       return true;
     }
 
@@ -96,13 +96,13 @@ public class ChunkLoaderCmd implements TabExecutor {
     // Handling for /chunkloader remove all
     if (args.length == 2) {
       if (args[0].equalsIgnoreCase("add")) {
-        audience.sendMessage(StringUtil.getSyntax(cmd));
+        audience.sendMessage(StringUtil.getSyntaxError(cmd));
         audience.sendMessage(mm(PREFIX + "Using \"<red>all<gray>\" is only possible when <red>chunk-unloading <gray>chunks."));
         return;
       }
 
       if (!args[1].equalsIgnoreCase("all")) {
-        audience.sendMessage(StringUtil.getSyntax(cmd));
+        audience.sendMessage(StringUtil.getSyntaxError(cmd));
         return;
       }
 
@@ -119,7 +119,7 @@ public class ChunkLoaderCmd implements TabExecutor {
       x = Integer.parseInt(args[1]) >> 4; // convert to chunk coordinates
       z = Integer.parseInt(args[2]) >> 4; // convert to chunk coordinates
     } catch (NumberFormatException ex) {
-      audience.sendMessage(StringUtil.getSyntax(cmd));
+      audience.sendMessage(StringUtil.getSyntaxError(cmd));
       return;
     }
 

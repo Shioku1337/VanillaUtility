@@ -8,6 +8,7 @@ import com.github.shioku.vanillautility.misc.StringUtil;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
@@ -23,18 +24,17 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@RequiredArgsConstructor
 public class AdvancementListCmd implements TabExecutor {
 
-  private final VanillaUtility plugin;
+  // TODO / Add: grepable -> /advancementlist some/advancement-id <grep-exp> -> /advl husbandry/bred-all-animals sniffer
 
-  public AdvancementListCmd(VanillaUtility plugin) {
-    this.plugin = plugin;
-  }
+  private final VanillaUtility plugin;
 
   private final Component infoComponent = MiniMessage.miniMessage()
     .deserialize(
       PREFIX +
-      "You can find the needed ids on the " +
+      "You can find the needed IDs on the " +
       "<u><aqua><click:open_url:https://minecraft.fandom.com/wiki/Advancement#List_of_advancements>Minecraft Advancement List</click></aqua></u>! " +
       "The column \"Resource Location\" is the correct input!"
     );
@@ -50,7 +50,7 @@ public class AdvancementListCmd implements TabExecutor {
     MiniMessage miniMessage = MiniMessage.miniMessage();
 
     if (args.length != 1) {
-      audience.sendMessage(StringUtil.getSyntax(cmd));
+      audience.sendMessage(StringUtil.getSyntaxError(cmd));
       audience.sendMessage(this.infoComponent);
       return true;
     }

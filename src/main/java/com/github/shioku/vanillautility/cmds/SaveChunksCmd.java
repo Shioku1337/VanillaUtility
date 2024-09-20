@@ -24,7 +24,7 @@ public class SaveChunksCmd implements TabExecutor {
     Audience audience = plugin.adventure().sender(sender);
 
     if (args.length != 0) {
-      audience.sendMessage(StringUtil.getSyntax(cmd));
+      audience.sendMessage(StringUtil.getSyntaxError(cmd));
       return true;
     }
 
