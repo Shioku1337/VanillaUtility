@@ -1,5 +1,5 @@
 name: VanillaUtility
-version: 2.0.0
+version: 2.0.1
 main: com.github.shioku.vanillautility.VanillaUtility
 api-version: '1.21'
 website: 'https://github.com/Shioku1337/VanillaUtility/releases'
@@ -31,10 +31,10 @@ commands:
     aliases: [advl]
     description: "List specific advancements to show the progress you've made and what is missing."
     permission: "vu.advancementlist"
-    usage: "/<label> (advancement_key)"
+    usage: "/<label> (advancement_key) [filter_keyword]"
   savechunks:
     aliases: [sc]
-    description: "Save currently chunk-loaded chunks to the persistend YAML file."
+    description: "Save currently chunk-loaded chunks to the persistent YAML file."
     permission: "vu.savechunks"
     usage: "/<label>"
   sharedinv:
